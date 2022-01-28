@@ -2,7 +2,7 @@ script_name('Esida')
 script_description('Скрипт для гос организации.')
 script_author('Alex_Benson')
 script_version_number(46)
-script_version('3.0')
+script_version('3.0 beta')
 script_dependencies('mimgui; samp events; lfs; MoonMonet')
 
 require 'moonloader'
@@ -11,14 +11,28 @@ local inicfg					= require 'inicfg'
 local vkeys						= require 'vkeys'
 local bit 						= require 'bit'
 local ffi 						= require 'ffi'
-
+local requests = require 'requests'
+local samp = require 'lib.samp.events'
+local encoding = require 'encoding'
+encoding.default = 'CP1251'
+u8 = encoding.UTF8
+local mc, sc, wc = '{2090FF}', '{00AAFF}', '{FFFFFF}'
+local tag = mc..'Esida »  '..wc
 local encodingcheck, encoding	= pcall(require, 'encoding')
 local imguicheck, imgui			= pcall(require, 'mimgui')
 local monetluacheck, monetlua 	= pcall(require, 'MoonMonet')
 local lfscheck, lfs 			= pcall(require, 'lfs')
 local sampevcheck, sampev		= pcall(require, 'lib.samp.events')
-
-if not imguicheck or not sampevcheck or not encodingcheck or not lfscheck or not monetluacheck or not doesFileExist('moonloader/AS Helper/Images/binderblack.png') or not doesFileExist('moonloader/AS Helper/Images/binderwhite.png') or not doesFileExist('moonloader/AS Helper/Images/lectionblack.png') or not doesFileExist('moonloader/AS Helper/Images/lectionwhite.png') or not doesFileExist('moonloader/AS Helper/Images/settingsblack.png') or not doesFileExist('moonloader/AS Helper/Images/settingswhite.png') or not doesFileExist('moonloader/AS Helper/Images/changelogblack.png') or not doesFileExist('moonloader/AS Helper/Images/changelogwhite.png') or not doesFileExist('moonloader/AS Helper/Images/departamentblack.png') or not doesFileExist('moonloader/AS Helper/Images/departamenwhite.png') then
+function urlencode(str)
+   if (str) then
+      str = string.gsub (str, "\n", "\r\n")
+      str = string.gsub (str, "([^%w ])",
+         function (c) return string.format ("%%%02X", string.byte(c)) end)
+      str = string.gsub (str, " ", "+")
+   end
+   return str
+end
+if not imguicheck or not sampevcheck or not encodingcheck or not lfscheck or not monetluacheck or not doesFileExist('moonloader/Esida/Images/binderblack.png') or not doesFileExist('moonloader/Esida/Images/binderwhite.png') or not doesFileExist('moonloader/Esida/Images/lectionblack.png') or not doesFileExist('moonloader/Esida/Images/lectionwhite.png') or not doesFileExist('moonloader/Esida/Images/settingsblack.png') or not doesFileExist('moonloader/Esida/Images/settingswhite.png') or not doesFileExist('moonloader/Esida/Images/changelogblack.png') or not doesFileExist('moonloader/Esida/Images/changelogwhite.png') or not doesFileExist('moonloader/Esida/Images/departamentblack.png') or not doesFileExist('moonloader/Esida/Images/departamenwhite.png') then
 	function main()
 		if not isSampLoaded() or not isSampfuncsLoaded() then return end
 		while not isSampAvailable() do wait(1000) end
@@ -59,6 +73,7 @@ if not imguicheck or not sampevcheck or not encodingcheck or not lfscheck or not
 			local x = select(1,getScreenResolution()) * 0.5 - 100
 			local y = select(2, getScreenResolution()) - 70
 			while true do
+				rnd = math.random(-2147483648, 2147483647)
 				if progressbar and progressbar.max ~= 0 and progressbar.downloadinglibname and progressbar.downloaded and progressbar.downloadingtheme then
 					local jj = (200-10)/progressbar.max
 					local downloaded = progressbar.downloaded * jj
@@ -74,7 +89,7 @@ if not imguicheck or not sampevcheck or not encodingcheck or not lfscheck or not
 			end
 		end)
 
-		sampAddChatMessage(('[ASHelper]{EBEBEB} Началось скачивание необходимых файлов. Если скачивание не удастся, то обратитесь к {ff6633}vk.com/446{ebebeb}.'),0xff6633)
+		sampAddChatMessage(('{2090FF}Esida » {FFFFFF}Началось скачивание необходимых файлов. Если скачивание не удастся, то обратитесь к {ff6633}vk.com/446{ebebeb}.'),0xff6633)
 
 		if not imguicheck then -- Нашел только релизную версию в архиве, так что пришлось залить файлы сюда, при обновлении буду обновлять и у себя
 			print('{FFFF00}Скачивание: mimgui')
@@ -132,21 +147,21 @@ if not imguicheck or not sampevcheck or not encodingcheck or not lfscheck or not
 			print('{00FF00}lfs успешно скачан')
 		end
 
-		if not doesFileExist('moonloader/AS Helper/Images/binderblack.png') or not doesFileExist('moonloader/AS Helper/Images/binderwhite.png') or not doesFileExist('moonloader/AS Helper/Images/lectionblack.png') or not doesFileExist('moonloader/AS Helper/Images/lectionwhite.png') or not doesFileExist('moonloader/AS Helper/Images/settingsblack.png') or not doesFileExist('moonloader/AS Helper/Images/settingswhite.png') or not doesFileExist('moonloader/AS Helper/Images/changelogblack.png') or not doesFileExist('moonloader/AS Helper/Images/changelogwhite.png') or not doesFileExist('moonloader/AS Helper/Images/departamentblack.png') or not doesFileExist('moonloader/AS Helper/Images/departamenwhite.png') then
+		if not doesFileExist('moonloader/Esida/Images/binderblack.png') or not doesFileExist('moonloader/Esida/Images/binderwhite.png') or not doesFileExist('moonloader/Esida/Images/lectionblack.png') or not doesFileExist('moonloader/Esida/Images/lectionwhite.png') or not doesFileExist('moonloader/Esida/Images/settingsblack.png') or not doesFileExist('moonloader/Esida/Images/settingswhite.png') or not doesFileExist('moonloader/Esida/Images/changelogblack.png') or not doesFileExist('moonloader/Esida/Images/changelogwhite.png') or not doesFileExist('moonloader/Esida/Images/departamentblack.png') or not doesFileExist('moonloader/Esida/Images/departamenwhite.png') then
 			print('{FFFF00}Скачивание: PNG Файлы')
-			createDirectory('moonloader/AS Helper')
-			createDirectory('moonloader/AS Helper/Images')
+			createDirectory('moonloader/Esida')
+			createDirectory('moonloader/Esida/Images')
 			DownloadFiles({theme = 'PNG Файлы',
-				{url = 'https://github.com/Just-Mini/biblioteki/raw/main/Images/binderblack.png', file = 'moonloader/AS Helper/Images/binderblack.png', name = 'binderblack.png'},
-				{url = 'https://github.com/Just-Mini/biblioteki/raw/main/Images/binderwhite.png', file = 'moonloader/AS Helper/Images/binderwhite.png', name = 'binderwhite.png'},
-				{url = 'https://github.com/Just-Mini/biblioteki/raw/main/Images/lectionblack.png', file = 'moonloader/AS Helper/Images/lectionblack.png', name = 'lectionblack.png'},
-				{url = 'https://github.com/Just-Mini/biblioteki/raw/main/Images/lectionwhite.png', file = 'moonloader/AS Helper/Images/lectionwhite.png', name = 'lectionwhite.png'},
-				{url = 'https://github.com/Just-Mini/biblioteki/raw/main/Images/settingsblack.png', file = 'moonloader/AS Helper/Images/settingsblack.png', name = 'settingsblack.png'},
-				{url = 'https://github.com/Just-Mini/biblioteki/raw/main/Images/settingswhite.png', file = 'moonloader/AS Helper/Images/settingswhite.png', name = 'settingswhite.png'},
-				{url = 'https://github.com/Just-Mini/biblioteki/raw/main/Images/departamentblack.png', file = 'moonloader/AS Helper/Images/departamentblack.png', name = 'departamentblack.png'},
-				{url = 'https://github.com/Just-Mini/biblioteki/raw/main/Images/departamenwhite.png', file = 'moonloader/AS Helper/Images/departamenwhite.png', name = 'departamenwhite.png'},
-				{url = 'https://github.com/Just-Mini/biblioteki/raw/main/Images/changelogblack.png', file = 'moonloader/AS Helper/Images/changelogblack.png', name = 'changelogblack.png'},
-				{url = 'https://github.com/Just-Mini/biblioteki/raw/main/Images/changelogwhite.png', file = 'moonloader/AS Helper/Images/changelogwhite.png', name = 'changelogwhite.png'},
+				{url = 'https://raw.githubusercontent.com/Hitok-Vandal/Esida/main/Esida.png', file = 'moonloader/Esida/Images/binderblack.png', name = 'binderblack.png'},
+				{url = 'https://raw.githubusercontent.com/Hitok-Vandal/Esida/main/Esida.png', file = 'moonloader/Esida/Images/binderwhite.png', name = 'binderwhite.png'},
+				{url = 'https://raw.githubusercontent.com/Hitok-Vandal/Esida/main/Esida.png', file = 'moonloader/Esida/Images/lectionblack.png', name = 'lectionblack.png'},
+				{url = 'https://raw.githubusercontent.com/Hitok-Vandal/Esida/main/Esida.png', file = 'moonloader/Esida/Images/lectionwhite.png', name = 'lectionwhite.png'},
+				{url = 'https://raw.githubusercontent.com/Hitok-Vandal/Esida/main/Esida.png', file = 'moonloader/Esida/Images/settingsblack.png', name = 'settingsblack.png'},
+				{url = 'https://raw.githubusercontent.com/Hitok-Vandal/Esida/main/Esida.png', file = 'moonloader/Esida/Images/settingswhite.png', name = 'settingswhite.png'},
+				{url = 'https://raw.githubusercontent.com/Hitok-Vandal/Esida/main/Esida.png', file = 'moonloader/Esida/Images/departamentblack.png', name = 'departamentblack.png'},
+				{url = 'https://raw.githubusercontent.com/Hitok-Vandal/Esida/main/Esida.png', file = 'moonloader/Esida/Images/departamenwhite.png', name = 'departamenwhite.png'},
+				{url = 'https://raw.githubusercontent.com/Hitok-Vandal/Esida/main/ChangelogBlack.png', file = 'moonloader/Esida/Images/changelogblack.png', name = 'changelogblack.png'},
+				{url = 'https://raw.githubusercontent.com/Hitok-Vandal/Esida/main/ChangelogBlack.png', file = 'moonloader/Esida/Images/changelogwhite.png', name = 'changelogwhite.png'},
 			})
 			print('{00FF00}PNG Файлы успешно скачаны')
 		end
@@ -156,35 +171,34 @@ if not imguicheck or not sampevcheck or not encodingcheck or not lfscheck or not
 	end
 	return
 end
-
 local print, clock, sin, cos, floor, ceil, abs, format, gsub, gmatch, find, char, len, upper, lower, sub, u8, new, str, sizeof = print, os.clock, math.sin, math.cos, math.floor, math.ceil, math.abs, string.format, string.gsub, string.gmatch, string.find, string.char, string.len, string.upper, string.lower, string.sub, encoding.UTF8, imgui.new, ffi.string, ffi.sizeof
 
 encoding.default = 'CP1251'
 
 local configuration = inicfg.load({
 	main_settings = {
-		myrankint = 1,
+		myrankint = 10,
 		gender = 0,
 		style = 0,
 		rule_align = 1,
 		lection_delay = 10,
 		lection_type = 1,
 		fmtype = 0,
-		playcd = 2000,
-		fmstyle = nil,
+		playcd = 500,
+		fmstyle = 0,
 		updatelastcheck = nil,
 		myname = '',
 		myaccent = '',
-		astag = 'Автошкола',
-		expelreason = 'Н.П.А.',
+		astag = '',
+		expelreason = 'Esida',
 		usefastmenucmd = 'ashfm',
 		createmarker = false,
 		dorponcmd = true,
-		replacechat = true,
+		replacechat = false,
 		replaceash = false,
-		dofastscreen = true,
+		dofastscreen = false,
 		noscrollbar = true,
-		playdubinka = true,
+		playdubinka = false,
 		changelog = true,
 		autoupdate = true,
 		getbetaupd = false,
@@ -203,7 +217,7 @@ local configuration = inicfg.load({
 		taxiprice = 250000,
 		RChatColor = 4282626093,
 		DChatColor = 4294940723,
-		ASChatColor = 4281558783,
+		ASChatColor = 4294940723,
 		monetstyle = -16729410,
 		monetstyle_chroma = 1.0,
 	},
@@ -222,16 +236,16 @@ local configuration = inicfg.load({
 		taxi = 0
 	},
 	RankNames = {
-		'Стажёр',
-		'Консультант',
-		'Лицензёр',
-		'Мл.Инструктор',
-		'Инструктор',
-		'Менеджер',
-		'Ст. Менеджер',
-		'Помощник директора',
-		'Директор',
-		'Управляющий',
+		'Свободная переменная',
+		'Свободная переменная',
+		'Свободная переменная',
+		'Свободная переменная',
+		'Свободная переменная',
+		'Свободная переменная',
+		'token_id',
+		'1',
+		'Свободная переменная',
+		'Администратор',
 	},
 	BindsName = {},
 	BindsDelay = {},
@@ -239,7 +253,7 @@ local configuration = inicfg.load({
 	BindsAction = {},
 	BindsCmd = {},
 	BindsKeys = {}
-}, 'AS Helper')
+}, 'Esida')
 
 -- icon fonts
 	local fa = {
@@ -557,7 +571,7 @@ local fmbuttons = {
 local settingsbuttons = {
 	fa.ICON_FA_USER..u8(' Пользователь'),
 	fa.ICON_FA_PALETTE..u8(' Вид скрипта'),
-	fa.ICON_FA_FILE_ALT..u8(' Цены'),
+	--fa.ICON_FA_FILE_ALT..u8(' Цены'),
 }
 
 local additionalbuttons = {
@@ -581,16 +595,16 @@ imgui.OnInitialize(function()
 
 	imgui.GetIO().IniFilename = nil
 
-	whiteashelper = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\AS Helper\\Images\\settingswhite.png')
-	blackashelper = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\AS Helper\\Images\\settingsblack.png')
-	whitebinder = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\AS Helper\\Images\\binderwhite.png')
-	blackbinder = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\AS Helper\\Images\\binderblack.png')
-	whitelection = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\AS Helper\\Images\\lectionwhite.png')
-	blacklection = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\AS Helper\\Images\\lectionblack.png')
-	whitedepart = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\AS Helper\\Images\\departamenwhite.png')
-	blackdepart = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\AS Helper\\Images\\departamentblack.png')
-	whitechangelog = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\AS Helper\\Images\\changelogwhite.png')
-	blackchangelog = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\AS Helper\\Images\\changelogblack.png')
+	whiteashelper = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\Esida\\Images\\settingswhite.png')
+	blackashelper = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\Esida\\Images\\settingsblack.png')
+	whitebinder = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\Esida\\Images\\binderwhite.png')
+	blackbinder = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\Esida\\Images\\binderblack.png')
+	whitelection = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\Esida\\Images\\lectionwhite.png')
+	blacklection = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\Esida\\Images\\lectionblack.png')
+	whitedepart = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\Esida\\Images\\departamenwhite.png')
+	blackdepart = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\Esida\\Images\\departamentblack.png')
+	whitechangelog = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\Esida\\Images\\changelogwhite.png')
+	blackchangelog = imgui.CreateTextureFromFile(getGameDirectory()..'\\moonloader\\Esida\\Images\\changelogblack.png')
 	rainbowcircle = imgui.CreateTextureFromFileInMemory(new('const char*', circle_data), #circle_data)
 	
 	local config = imgui.ImFontConfig()
@@ -1015,7 +1029,7 @@ function changePosition(table)
 			end
 		end
 		ChangePos = false
-		inicfg.save(configuration,'AS Helper')
+		inicfg.save(configuration,'Esida')
 	end)
 end
 
@@ -1424,13 +1438,13 @@ function imgui.HotKey(name, path, pointer, defaultKey, width)
 				path[pointer] = table.concat(imgui.GetKeysName(tKeys), ' + ')
 				tHotKeyData.edit = nil
 				tHotKeyData.lasted = clock()
-				inicfg.save(configuration,'AS Helper')
+				inicfg.save(configuration,'Esida')
 			end
 		else
 			path[pointer] = defaultKey
 			tHotKeyData.edit = nil
 			tHotKeyData.lasted = clock()
-			inicfg.save(configuration,'AS Helper')
+			inicfg.save(configuration,'Esida')
 		end
 	end
 
@@ -1562,7 +1576,7 @@ local imgui_fm = imgui.OnFrame(
 							imgui.Text(u8'Причина /expel:')
 							if imgui.InputText('##expelreasonbuff',usersettings.expelreason, sizeof(usersettings.expelreason)) then
 								configuration.main_settings.expelreason = u8:decode(str(usersettings.expelreason))
-								inicfg.save(configuration,'AS Helper')
+								inicfg.save(configuration,'Esida')
 							end
 							imgui.EndPopup()
 						end
@@ -1995,7 +2009,7 @@ local imgui_fm = imgui.OnFrame(
 									imgui.SameLine()
 									if imgui.Button(fa.ICON_FA_TRASH..'##'..k, imgui.ImVec2(30,30)) then
 										table.remove(questions.questions,k)
-										local file = io.open(getWorkingDirectory()..'\\AS Helper\\Questions.json', 'w')
+										local file = io.open(getWorkingDirectory()..'\\Esida\\Questions.json', 'w')
 										file:write(encodeJson(questions))
 										file:close()
 									end
@@ -2127,7 +2141,7 @@ local imgui_fm = imgui.OnFrame(
 									questions.questions[question_number].bq = u8:decode(str(questionsettings.questionques))
 									questions.questions[question_number].bhint = u8:decode(str(questionsettings.questionhint))
 								end
-								local file = io.open(getWorkingDirectory()..'\\AS Helper\\Questions.json', 'w')
+								local file = io.open(getWorkingDirectory()..'\\Esida\\Questions.json', 'w')
 								file:write(encodeJson(questions))
 								file:close()
 								imgui.CloseCurrentPopup()
@@ -2463,7 +2477,7 @@ local imgui_fm = imgui.OnFrame(
 										imgui.Text(u8'Причина /expel:')
 										if imgui.InputText('##expelreasonbuff',usersettings.expelreason, sizeof(usersettings.expelreason)) then
 											configuration.main_settings.expelreason = u8:decode(str(usersettings.expelreason))
-											inicfg.save(configuration,'AS Helper')
+											inicfg.save(configuration,'Esida')
 										end
 										imgui.EndPopup()
 									end
@@ -2785,7 +2799,7 @@ local imgui_fm = imgui.OnFrame(
 											imgui.SameLine()
 											if imgui.Button(fa.ICON_FA_TRASH..'##'..k, imgui.ImVec2(20,25)) then
 												table.remove(questions.questions,k)
-												local file = io.open(getWorkingDirectory()..'\\AS Helper\\Questions.json', 'w')
+												local file = io.open(getWorkingDirectory()..'\\Esida\\Questions.json', 'w')
 												file:write(encodeJson(questions))
 												file:close()
 											end
@@ -2916,7 +2930,7 @@ local imgui_fm = imgui.OnFrame(
 										questions.questions[question_number].bq = u8:decode(str(questionsettings.questionques))
 										questions.questions[question_number].bhint = u8:decode(str(questionsettings.questionhint))
 									end
-									local file = io.open(getWorkingDirectory()..'\\AS Helper\\Questions.json', 'w')
+									local file = io.open(getWorkingDirectory()..'\\Esida\\Questions.json', 'w')
 									file:write(encodeJson(questions))
 									file:close()
 									imgui.CloseCurrentPopup()
@@ -3324,46 +3338,73 @@ local imgui_settings = imgui.OnFrame(
 				end
 				imgui.PopStyleColor(3)
 				imgui.SetCursorPos(imgui.ImVec2(217, 23))
-				imgui.TextColored(imgui.GetStyle().Colors[imgui.Col.Border],'v. '..thisScript().version)
-				imgui.Hint('lastupdate','Обновление от 11.12.2021')
+				imgui.TextColored(imgui.GetStyle().Colors[imgui.Col.Border],'v. '..thisScript().version.. (devmode and ' (Insider Preview)' or ''))
+				imgui.Hint('lastupdate','Обновление от 28.01.2022')
 				imgui.PushStyleVarVec2(imgui.StyleVar.WindowPadding, imgui.ImVec2(15,15))
 				if imgui.BeginPopupModal(u8'Все команды', _, imgui.WindowFlags.NoCollapse + imgui.WindowFlags.NoScrollbar + imgui.WindowFlags.AlwaysAutoResize + imgui.WindowFlags.NoTitleBar) then
 					imgui.PushFont(font[16])
-					imgui.TextColoredRGB('Все доступные команды и горячие клавиши', 1)
+					imgui.TextColoredRGB('Все доступные команды', 1)
 					imgui.PopFont()
 					imgui.Spacing()
 					imgui.TextColoredRGB('Команды скрипта:')
 					imgui.SetCursorPosX(20)
 					imgui.BeginGroup()
-						imgui.TextColoredRGB('/ash - Главное меню скрипта')
-						imgui.TextColoredRGB('/ashbind - Биндер скрипта')
-						imgui.TextColoredRGB('/ashlect - Меню лекций скрипта')
-						imgui.TextColoredRGB('/ashdep - Меню департамента скрипта')
-						if configuration.main_settings.fmtype == 1 then
-							imgui.TextColoredRGB('/'..configuration.main_settings.usefastmenucmd..' [id] - Меню взаимодействия с клиентом')
-						end
+						imgui.TextColoredRGB(mc..'/lid{SSSSSS} - Основное меню скрипта')
+						imgui.TextColoredRGB(mc..'/setpost [Должность]{SSSSSS} - Изменить свою должность в скрипте')
+						imgui.TextColoredRGB(mc..'/slitcar{SSSSSS} - Слить машину в госс')
 					imgui.EndGroup()
 					imgui.Spacing()
-					imgui.TextColoredRGB('Команды сервера с РП отыгровками:')
+					imgui.TextColoredRGB('Команды для взаимодействие с игроками:')
 					imgui.SetCursorPosX(20)
 					imgui.BeginGroup()
-						imgui.TextColoredRGB('/invite [id] | /uninvite [id] [причина] - Принятие/Увольнение человека во фракцию (9+)')
-						imgui.TextColoredRGB('/blacklist [id] [причина] | /unblacklist [id] - Занесение/Удаление человека в ЧС фракции (9+)')
-						imgui.TextColoredRGB('/fwarn [id] [причина] | /unfwarn [id] - Выдача/Удаление выговора человека во фракции (9+)')
-						imgui.TextColoredRGB('/fmute [id] [время] [причина] | /funmute [id] - Выдача/Удаление мута человеку во фракции (9+)')
-						imgui.TextColoredRGB('/giverank [id] [ранг] - Изменение ранга человека в фракции (9+)')
-						imgui.TextColoredRGB('/expel [id] [причина] - Выгнать человека из автошколы (2+)')
+						imgui.TextColoredRGB(mc..'/cj [ID]{SSSSSS} - Спавн и тп обратно игрока')
+						imgui.TextColoredRGB(mc..'/getcar [ID car]{SSSSSS} - ТП машину к себе')
+						imgui.TextColoredRGB(mc..'/ghcar [ID car]{SSSSSS} - ТП машину к себе')
+						imgui.TextColoredRGB(mc..'/hl [ID]{SSSSSS} - Выдать игроку 100 hp')
+						imgui.TextColoredRGB(mc..'/kill [ID]{SSSSSS} - Убить игрока')
+						imgui.TextColoredRGB(mc..'/delops [ID] [PayDay] [Причина]{SSSSSS} - Удалить описание игрока')
+						imgui.TextColoredRGB(mc..'/bug [ID]{SSSSSS} - Посадить в /jail и обратно игрока')
+						imgui.TextColoredRGB(mc..'/flip [ID]{SSSSSS} - Флипнуть игрока/себя')
+						imgui.TextColoredRGB(mc..'/spawn [ID]{SSSSSS} - Заспавнить игрока/себя')
+						imgui.TextColoredRGB(mc..'/slap [ID] [1/2]{SSSSSS} - Слапнуть игрока/себя')
 					imgui.EndGroup()
 					imgui.Spacing()
-					imgui.TextColoredRGB('Горячие клавиши:')
+					imgui.TextColoredRGB('Команды для отказа игрокам:')
 					imgui.SetCursorPosX(20)
 					imgui.BeginGroup()
-						if configuration.main_settings.fmtype == 0 then
-							imgui.TextColoredRGB('ПКМ + '..configuration.main_settings.usefastmenu..' - Меню взаимодействия с клиентом')
+						imgui.TextColoredRGB(mc..'/noflip [ID]{SSSSSS} - Не флипаем')
+						imgui.TextColoredRGB(mc..'/noveh [ID]{SSSSSS} - Не даем транспорт')
+						imgui.TextColoredRGB(mc..'/noname [ID]{SSSSSS} - Попросить сменить НонРП ник')
+						imgui.TextColoredRGB(mc..'/nosp [ID]{SSSSSS} - Не спавним')
+						imgui.TextColoredRGB(mc..'/nofill [ID]{SSSSSS} - Не заправляем')
+						imgui.TextColoredRGB(mc..'/nohl [ID]{SSSSSS} - Не лечим')
+						imgui.TextColoredRGB(mc..'/nouval [ID]{SSSSSS} - Не увольняем')
+					imgui.EndGroup()
+					imgui.Spacing()
+					imgui.TextColoredRGB('Команды для работы с ВКонтакте:')
+					imgui.SetCursorPosX(20)
+					imgui.BeginGroup()
+						imgui.TextColoredRGB(mc..'/form [Форма]{SSSSSS} - Отправить форму (Тег указывать не нужно)')
+						imgui.TextColoredRGB(mc..'/dform [Форма]{SSSSSS} - Удалить форму')
+						imgui.TextColoredRGB(mc..'/settag [Админ-Тег]{SSSSSS} - Изменить свой админ тег в скрипте')
+						imgui.TextColoredRGB(mc..'/settoken [Токен]{SSSSSS} - Изменить токен от ВКонтакте')
+						imgui.TextColoredRGB(mc..'/setchatid [ID беседы]{SSSSSS} - Изменить ID беседы куда отправлять сообщение')
+						imgui.TextColoredRGB(mc..'/lwarn [ID] [Причина]{SSSSSS} - Выдать предупреждения')
+						imgui.TextColoredRGB(mc..'/lunwarn [ID] [Причина]{SSSSSS} - Снять предупреждения')
+						imgui.TextColoredRGB(mc..'/vig [ID] [Причина]{SSSSSS} - Выдать выговор')
+						imgui.TextColoredRGB(mc..'/unvig [ID] [Причина]{SSSSSS} - Снять выговор')
+					imgui.EndGroup()
+					imgui.Spacing()
+					imgui.TextColoredRGB('Остальное:')
+					imgui.SetCursorPosX(20)
+					imgui.BeginGroup()
+						imgui.TextColoredRGB(mc..'/finv [ID]{SSSSSS} - Принять человека в семью')
+						if devmode then
+							imgui.TextColoredRGB(mc..'/dev{SSSSSS} - Включить/Выключить режим разработчика')
 						end
-						imgui.TextColoredRGB(configuration.main_settings.fastscreen..' - Быстрый скриншот')
-						imgui.TextColoredRGB('Alt + I - Информировать, что делать при отсутствии мед. карты')
-						imgui.TextColoredRGB('Alt + U - Остановить отыгровку')
+						imgui.TextColoredRGB(mc..'/mb{SSSSSS} - Укороченая команда /members')
+						imgui.TextColoredRGB(mc..'/jobp{SSSSSS} - Укороченая команда /jobprogress')
+						imgui.TextColoredRGB(mc..'/cjp [ID]{SSSSSS} - Укороченая команда /checkjobprogress')
 					imgui.EndGroup()
 					imgui.Spacing()
 					if imgui.Button(u8'Закрыть##команды', imgui.ImVec2(-1, 30)) then 
@@ -3473,151 +3514,52 @@ local imgui_settings = imgui.OnFrame(
 						
 									imgui.BeginGroup()
 										imgui.SetCursorPosY(imgui.GetCursorPosY() + 3)
-										imgui.Text(u8'Ваше имя')
-										imgui.SetCursorPosY(imgui.GetCursorPosY() + 10)
-										imgui.Text(u8'Акцент')
-										imgui.SetCursorPosY(imgui.GetCursorPosY() + 10)
 										imgui.Text(u8'Ваш пол')
 										imgui.SetCursorPosY(imgui.GetCursorPosY() + 10)
-										imgui.Text(u8'Ваш ранг')
+										imgui.Text(u8'Должность')
 									imgui.EndGroup()
 						
 									imgui.SameLine(90)
 									imgui.PushItemWidth(120)
 									imgui.BeginGroup()
-										if imgui.InputTextWithHint(u8'##mynickinroleplay', u8((gsub(sampGetPlayerNickname(select(2,sampGetPlayerIdByCharHandle(playerPed))), '_', ' '))), usersettings.myname, sizeof(usersettings.myname)) then
-											configuration.main_settings.myname = str(usersettings.myname)
-											inicfg.save(configuration,'AS Helper')
-										end
-										imgui.SameLine()
-										imgui.Text(fa.ICON_FA_QUESTION_CIRCLE)
-										imgui.Hint('NoNickNickFromTab','Если не будет указано, то имя будет браться из ника')
-									
-										if imgui.InputText(u8'##myaccentintroleplay', usersettings.myaccent, sizeof(usersettings.myaccent)) then
-											configuration.main_settings.myaccent = str(usersettings.myaccent)
-											inicfg.save(configuration,'AS Helper')
-										end
 									
 										imgui.PushStyleVarVec2(imgui.StyleVar.WindowPadding,imgui.ImVec2(10,10))
 										if imgui.Combo(u8'##choosegendercombo',usersettings.gender, new['const char*'][2]({u8'Мужской',u8'Женский'}), 2) then
 											configuration.main_settings.gender = usersettings.gender[0]
-											inicfg.save(configuration,'AS Helper')
+											inicfg.save(configuration,'Esida')
 										end
 										imgui.PopStyleVar()
 									
-										if imgui.Button(u8(configuration.RankNames[configuration.main_settings.myrankint]..' ('..u8(configuration.main_settings.myrankint)..')'), imgui.ImVec2(120, 23)) then
+										if imgui.Button(u8(configuration.RankNames[configuration.main_settings.myrankint]), imgui.ImVec2(120, 23)) then
 											getmyrank = true
 											sampSendChat('/stats')
 										end
-										imgui.Hint('clicktoupdaterang','Нажмите, чтобы перепроверить')
+										imgui.Hint('clicktoupdaterang','Для изменения введите /setpost')
 									imgui.EndGroup()
 									imgui.PopItemWidth()
 									
 								imgui.EndGroup()
-								imgui.NewLine()
-									
-								imgui.PushFont(font[16])
-								imgui.Text(u8'Меню быстрого доступа')
-								imgui.PopFont()
-								imgui.SetCursorPosX(25)
-								imgui.BeginGroup()
-									imgui.SetCursorPosY(imgui.GetCursorPosY() + 3)
-									imgui.Text(u8'Тип активации')
-									imgui.SameLine(100)
-									imgui.SetCursorPosY(imgui.GetCursorPosY() - 3)
-									imgui.PushItemWidth(120)
-									imgui.PushStyleVarVec2(imgui.StyleVar.WindowPadding,imgui.ImVec2(10,10))
-									if imgui.Combo(u8'##choosefmtypecombo',usersettings.fmtype, new['const char*'][2]({u8'Клавиша',u8'Команда'}), 2) then
-										configuration.main_settings.fmtype = usersettings.fmtype[0]
-										inicfg.save(configuration,'AS Helper')
-									end
-									imgui.PopStyleVar()
-									imgui.PopItemWidth()
+								imgui.NewLine()	
 								
-									imgui.SetCursorPosY(imgui.GetCursorPosY() + 4)
-									imgui.Text(u8'Активация')
-									imgui.SameLine(100)
-								
-									if configuration.main_settings.fmtype == 0 then
-										imgui.Text(u8' ПКМ + ')
-										imgui.SameLine(140)
-										imgui.SetCursorPosY(imgui.GetCursorPosY() - 4)
-										imgui.HotKey('меню быстрого доступа', configuration.main_settings, 'usefastmenu', 'E', find(configuration.main_settings.usefastmenu, '+') and 150 or 75)
-									
-										if imgui.ToggleButton(u8'Создавать маркер при выделении',usersettings.createmarker) then
-											if marker ~= nil then
-												removeBlip(marker)
-											end
-											marker = nil
-											oldtargettingped = 0
-											configuration.main_settings.createmarker = usersettings.createmarker[0]
-											inicfg.save(configuration,'AS Helper')
-										end
-									elseif configuration.main_settings.fmtype == 1 then
-										imgui.Text(u8'/')
-										imgui.SameLine(110)
-										imgui.SetCursorPosY(imgui.GetCursorPosY() - 4)
-										imgui.PushItemWidth(110)
-										if imgui.InputText(u8'[id]##usefastmenucmdbuff',usersettings.usefastmenucmd,sizeof(usersettings.usefastmenucmd)) then
-											configuration.main_settings.usefastmenucmd = str(usersettings.usefastmenucmd)
-											inicfg.save(configuration,'AS Helper')
-										end
-										imgui.PopItemWidth()
-									end
-									
-								imgui.EndGroup()
-								imgui.NewLine()
-								
-								imgui.PushFont(font[16])
-								imgui.Text(u8'Статистика')
-								imgui.PopFont()
-								imgui.SetCursorPosX(25)
-								imgui.BeginGroup()
-									if imgui.ToggleButton(u8'Отображать окно статистики', usersettings.statsvisible) then
-										configuration.main_settings.statsvisible = usersettings.statsvisible[0]
-										inicfg.save(configuration,'AS Helper')
-									end
-									imgui.SetCursorPosY(imgui.GetCursorPosY()-3)
-									if imgui.Button(fa.ICON_FA_ARROWS_ALT..'##statsscreenpos') then
-										if configuration.main_settings.statsvisible then
-											changePosition(configuration.imgui_pos)
-										else
-											addNotify('Включите отображение\nстатистики.', 5)
-										end
-									end
-									imgui.SameLine()
-									imgui.SetCursorPosY(imgui.GetCursorPosY()+3)
-									imgui.Text(u8'Местоположение')
-								imgui.EndGroup()
-								imgui.NewLine()
-
-								imgui.PushFont(font[16])
-								imgui.Text(u8'Остальное')
-								imgui.PopFont()
-								imgui.SetCursorPosX(25)
-								imgui.BeginGroup()
-								
-									if imgui.ToggleButton(u8'Заменять серверные сообщения', usersettings.replacechat) then
-										configuration.main_settings.replacechat = usersettings.replacechat[0]
-										inicfg.save(configuration,'AS Helper')
-									end
-								
-									if imgui.ToggleButton(u8'Быстрый скрин на', usersettings.dofastscreen) then
-										configuration.main_settings.dofastscreen = usersettings.dofastscreen[0]
-										inicfg.save(configuration,'AS Helper')
-									end
-									imgui.SameLine()
-									imgui.SetCursorPosY(imgui.GetCursorPosY() - 4)
-									imgui.HotKey('быстрого скрина', configuration.main_settings, 'fastscreen', 'F4', find(configuration.main_settings.fastscreen, '+') and 150 or 75)
+								imgui.Text(u8'Задержка между сообщениями:')
+								imgui.PushItemWidth(200)
+								if imgui.SliderFloat('##playcd', usersettings.playcd, 0.5, 10.0, '%.1f c.') then
+									if usersettings.playcd[0] < 0.5 then usersettings.playcd[0] = 0.5 end
+									if usersettings.playcd[0] > 10.0 then usersettings.playcd[0] = 10.0 end
+									configuration.main_settings.playcd = usersettings.playcd[0] * 1000
+									inicfg.save(configuration,'Esida')
+								end
+								imgui.PopItemWidth()
+			
 
 									imgui.PushItemWidth(85)
 									if imgui.InputText(u8'##expelreasonbuff',usersettings.expelreason,sizeof(usersettings.expelreason)) then
 										configuration.main_settings.expelreason = u8:decode(str(usersettings.expelreason))
-										inicfg.save(configuration,'AS Helper')
+										inicfg.save(configuration,'Esida')
 									end
 									imgui.PopItemWidth()
 									imgui.SameLine()
-									imgui.Text(u8'Причина /expel')
+									imgui.Text(u8'Ваш Админ-Тег')
 								imgui.EndGroup()
 								imgui.Spacing()
 							imgui.EndGroup()
@@ -3631,37 +3573,37 @@ local imgui_settings = imgui.OnFrame(
 								imgui.BeginGroup()
 									if imgui.CircleButton('##choosestyle0', configuration.main_settings.style == 0, imgui.ImVec4(1.00, 0.42, 0.00, 0.53)) then
 										configuration.main_settings.style = 0
-										inicfg.save(configuration, 'AS Helper.ini')
+										inicfg.save(configuration, 'Esida.ini')
 										checkstyle()
 									end
 									imgui.SameLine()
 									if imgui.CircleButton('##choosestyle1', configuration.main_settings.style == 1, imgui.ImVec4(1.00, 0.28, 0.28, 1.00)) then
 										configuration.main_settings.style = 1
-										inicfg.save(configuration, 'AS Helper.ini')
+										inicfg.save(configuration, 'Esida.ini')
 										checkstyle()
 									end
 									imgui.SameLine()
 									if imgui.CircleButton('##choosestyle2', configuration.main_settings.style == 2, imgui.ImVec4(0.00, 0.35, 1.00, 0.78)) then
 										configuration.main_settings.style = 2
-										inicfg.save(configuration, 'AS Helper.ini')
+										inicfg.save(configuration, 'Esida.ini')
 										checkstyle()
 									end
 									imgui.SameLine()
 									if imgui.CircleButton('##choosestyle3', configuration.main_settings.style == 3, imgui.ImVec4(0.41, 0.19, 0.63, 0.31)) then
 										configuration.main_settings.style = 3
-										inicfg.save(configuration, 'AS Helper.ini')
+										inicfg.save(configuration, 'Esida.ini')
 										checkstyle()
 									end
 									imgui.SameLine()
 									if imgui.CircleButton('##choosestyle4', configuration.main_settings.style == 4, imgui.ImVec4(0.00, 0.69, 0.33, 1.00)) then
 										configuration.main_settings.style = 4
-										inicfg.save(configuration, 'AS Helper.ini')
+										inicfg.save(configuration, 'Esida.ini')
 										checkstyle()
 									end
 									imgui.SameLine()
 									if imgui.CircleButton('##choosestyle5', configuration.main_settings.style == 5, imgui.ImVec4(0.51, 0.51, 0.51, 0.6)) then
 										configuration.main_settings.style = 5
-										inicfg.save(configuration, 'AS Helper.ini')
+										inicfg.save(configuration, 'Esida.ini')
 										checkstyle()
 									end
 									imgui.SameLine()
@@ -3671,7 +3613,7 @@ local imgui_settings = imgui.OnFrame(
 									imgui.SetCursorPos(pos)
 									if imgui.CircleButton('##choosestyle6', configuration.main_settings.style == 6, imgui.GetStyle().Colors[imgui.Col.Button], nil, true) then
 										configuration.main_settings.style = 6
-										inicfg.save(configuration, 'AS Helper.ini')
+										inicfg.save(configuration, 'Esida.ini')
 										checkstyle()
 									end
 									imgui.Hint('MoonMonetHint','MoonMonet')
@@ -3689,7 +3631,7 @@ local imgui_settings = imgui.OnFrame(
 											local r,g,b = usersettings.moonmonetcolorselect[0] * 255,usersettings.moonmonetcolorselect[1] * 255,usersettings.moonmonetcolorselect[2] * 255
 											local argb = join_argb(255,r,g,b)
 											configuration.main_settings.monetstyle = argb
-											inicfg.save(configuration, 'AS Helper.ini')
+											inicfg.save(configuration, 'Esida.ini')
 											checkstyle()
 										end
 										if imgui.SliderFloat('##CHROMA', monetstylechromaselect, 0.5, 2.0, u8'%0.2f c.m.') then
@@ -3701,67 +3643,20 @@ local imgui_settings = imgui.OnFrame(
 									imgui.NewLine()
 								end
 								imgui.PushFont(font[16])
-								imgui.Text(u8'Меню быстрого доступа')
-								imgui.PopFont()
-								imgui.SetCursorPosX(25)
-								imgui.BeginGroup()
-									if imgui.RadioButtonIntPtr(u8('Старый стиль'), usersettings.fmstyle, 0) then
-										configuration.main_settings.fmstyle = usersettings.fmstyle[0]
-										inicfg.save(configuration,'AS Helper')
-									end
-									if imgui.IsItemHovered() then
-										imgui.SetMouseCursor(imgui.MouseCursor.Hand)
-										imgui.SetNextWindowSize(imgui.ImVec2(90, 150))
-										imgui.Begin('##oldstyleshow', _, imgui.WindowFlags.Tooltip + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar + imgui.WindowFlags.NoTitleBar)
-											local p = imgui.GetCursorScreenPos()
-											for i = 0,6 do
-												imgui.GetWindowDrawList():AddRect(imgui.ImVec2(p.x + 5, p.y + 7 + i * 20), imgui.ImVec2(p.x + 85, p.y + 22 + i * 20), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Border]), 5, nil, 1.9)
-												imgui.GetWindowDrawList():AddLine(imgui.ImVec2(p.x + 15, p.y + 14 + i * 20), imgui.ImVec2(p.x + 75, p.y + 14 + i * 20), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Text]), 3)
-											end
-										imgui.End()
-									end
-									if imgui.RadioButtonIntPtr(u8('Новый стиль'), usersettings.fmstyle, 1) then
-										configuration.main_settings.fmstyle = usersettings.fmstyle[0]
-										inicfg.save(configuration,'AS Helper')
-									end
-									if imgui.IsItemHovered() then
-										imgui.SetMouseCursor(imgui.MouseCursor.Hand)
-										imgui.SetNextWindowSize(imgui.ImVec2(200, 110))
-										imgui.Begin('##newstyleshow', _, imgui.WindowFlags.Tooltip + imgui.WindowFlags.NoResize + imgui.WindowFlags.NoScrollbar + imgui.WindowFlags.NoTitleBar)
-											local p = imgui.GetCursorScreenPos()
-											for i = 0,3 do
-												imgui.GetWindowDrawList():AddRect(imgui.ImVec2(p.x + 5, p.y + 5 + i * 20), imgui.ImVec2(p.x + 115, p.y + 20 + i * 20), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Border]), 5, nil, 1.9)
-												imgui.GetWindowDrawList():AddLine(imgui.ImVec2(p.x + 15, p.y + 12 + i * 20), imgui.ImVec2(p.x + 105, p.y + 12 + i * 20), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Text]), 3)
-											end
-											imgui.GetWindowDrawList():AddLine(imgui.ImVec2(p.x + 120, p.y + 110), imgui.ImVec2(p.x + 120, p.y), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Border]), 1)
-											imgui.GetWindowDrawList():AddLine(imgui.ImVec2(p.x + 120, p.y + 25), imgui.ImVec2(p.x + 200, p.y + 25), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Border]), 1)
-											imgui.GetWindowDrawList():AddLine(imgui.ImVec2(p.x + 135, p.y + 8), imgui.ImVec2(p.x + 175, p.y + 8), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Text]), 3)
-											imgui.GetWindowDrawList():AddLine(imgui.ImVec2(p.x + 178, p.y + 8), imgui.ImVec2(p.x + 183, p.y + 8), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Text]), 3)
-											imgui.GetWindowDrawList():AddLine(imgui.ImVec2(p.x + 145, p.y + 18), imgui.ImVec2(p.x + 175, p.y + 18), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Text]), 3)
-											imgui.GetWindowDrawList():AddLine(imgui.ImVec2(p.x + 190, p.y + 30), imgui.ImVec2(p.x + 190, p.y + 45), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Border]), 2)
-											imgui.GetWindowDrawList():AddLine(imgui.ImVec2(p.x + 140, p.y + 37), imgui.ImVec2(p.x + 180, p.y + 37), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Text]), 3)
-											for i = 1,3 do
-												imgui.GetWindowDrawList():AddLine(imgui.ImVec2(p.x + 140, p.y + 37 + i * 20), imgui.ImVec2(p.x + 180, p.y + 37 + i * 20), imgui.ColorConvertFloat4ToU32(imgui.GetStyle().Colors[imgui.Col.Text]), 3)
-											end
-										imgui.End()
-									end
-								imgui.EndGroup()
-								imgui.NewLine()
-								imgui.PushFont(font[16])
 								imgui.Text(u8'Дополнительно')
 								imgui.PopFont()
 								imgui.SetCursorPosX(25)
 								imgui.BeginGroup()
 									if imgui.ColorEdit4(u8'##RSet', chatcolors.RChatColor, imgui.ColorEditFlags.NoInputs + imgui.ColorEditFlags.NoAlpha) then
 										configuration.main_settings.RChatColor = imgui.ColorConvertFloat4ToU32(imgui.ImVec4(chatcolors.RChatColor[0], chatcolors.RChatColor[1], chatcolors.RChatColor[2], chatcolors.RChatColor[3]))
-										inicfg.save(configuration, 'AS Helper.ini')
+										inicfg.save(configuration, 'Esida.ini')
 									end
 									imgui.SameLine()
 									imgui.Text(u8'Цвет чата организации')
 									imgui.SameLine(190)
 									if imgui.Button(u8'Сбросить##RCol',imgui.ImVec2(65,25)) then
 										configuration.main_settings.RChatColor = 4282626093
-										if inicfg.save(configuration, 'AS Helper.ini') then
+										if inicfg.save(configuration, 'Esida.ini') then
 											local temp = imgui.ColorConvertU32ToFloat4(configuration.main_settings.RChatColor)
 											chatcolors.RChatColor = new.float[4](temp.x, temp.y, temp.z, temp.w)
 										end
@@ -3776,14 +3671,14 @@ local imgui_settings = imgui.OnFrame(
 								
 									if imgui.ColorEdit4(u8'##DSet', chatcolors.DChatColor, imgui.ColorEditFlags.NoInputs + imgui.ColorEditFlags.NoAlpha) then
 										configuration.main_settings.DChatColor = imgui.ColorConvertFloat4ToU32(imgui.ImVec4(chatcolors.DChatColor[0], chatcolors.DChatColor[1], chatcolors.DChatColor[2], chatcolors.DChatColor[3]))
-										inicfg.save(configuration, 'AS Helper.ini')
+										inicfg.save(configuration, 'Esida.ini')
 									end
 									imgui.SameLine()
 									imgui.Text(u8'Цвет чата департамента')
 									imgui.SameLine(190)
 									if imgui.Button(u8'Сбросить##DCol',imgui.ImVec2(65,25)) then
 										configuration.main_settings.DChatColor = 4294940723
-										if inicfg.save(configuration, 'AS Helper.ini') then
+										if inicfg.save(configuration, 'Esida.ini') then
 											local temp = imgui.ColorConvertU32ToFloat4(configuration.main_settings.DChatColor)
 											chatcolors.DChatColor = new.float[4](temp.x, temp.y, temp.z, temp.w)
 										end
@@ -3798,14 +3693,14 @@ local imgui_settings = imgui.OnFrame(
 								
 									if imgui.ColorEdit4(u8'##SSet', chatcolors.ASChatColor, imgui.ColorEditFlags.NoInputs + imgui.ColorEditFlags.NoAlpha) then
 										configuration.main_settings.ASChatColor = imgui.ColorConvertFloat4ToU32(imgui.ImVec4(chatcolors.ASChatColor[0], chatcolors.ASChatColor[1], chatcolors.ASChatColor[2], chatcolors.ASChatColor[3]))
-										inicfg.save(configuration, 'AS Helper.ini')
+										inicfg.save(configuration, 'Esida.ini')
 									end
 									imgui.SameLine()
-									imgui.Text(u8'Цвет AS Helper в чате')
+									imgui.Text(u8'Цвет Esida в чате')
 									imgui.SameLine(190)
 									if imgui.Button(u8'Сбросить##SCol',imgui.ImVec2(65,25)) then
-										configuration.main_settings.ASChatColor = 4281558783
-										if inicfg.save(configuration, 'AS Helper.ini') then
+										configuration.main_settings.ASChatColor = 4294940723
+										if inicfg.save(configuration, 'Esida.ini') then
 											local temp = imgui.ColorConvertU32ToFloat4(configuration.main_settings.ASChatColor)
 											chatcolors.ASChatColor = new.float[4](temp.x, temp.y, temp.z, temp.w)
 										end
@@ -3814,11 +3709,7 @@ local imgui_settings = imgui.OnFrame(
 									if imgui.Button(u8'Тест##ASTest',imgui.ImVec2(37,25)) then
 										cout('Это сообщение видите только Вы!')
 									end
-									if imgui.ToggleButton(u8'Убирать полосу прокрутки', usersettings.noscrollbar) then
-										configuration.main_settings.noscrollbar = usersettings.noscrollbar[0]
-										inicfg.save(configuration,'AS Helper')
-										checkstyle()
-									end
+									
 								imgui.EndGroup()
 								imgui.Spacing()
 							imgui.EndGroup()
@@ -3831,38 +3722,38 @@ local imgui_settings = imgui.OnFrame(
 							imgui.BeginGroup()
 								if imgui.InputText(u8'Авто', pricelist.avtoprice, sizeof(pricelist.avtoprice), imgui.InputTextFlags.CharsDecimal) then
 									configuration.main_settings.avtoprice = str(pricelist.avtoprice)
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 								if imgui.InputText(u8'Рыбалка', pricelist.ribaprice, sizeof(pricelist.ribaprice), imgui.InputTextFlags.CharsDecimal) then
 									configuration.main_settings.ribaprice = str(pricelist.ribaprice)
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 								if imgui.InputText(u8'Оружие', pricelist.gunaprice, sizeof(pricelist.gunaprice), imgui.InputTextFlags.CharsDecimal) then
 									configuration.main_settings.gunaprice = str(pricelist.gunaprice)
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 								if imgui.InputText(u8'Раскопки', pricelist.kladprice, sizeof(pricelist.kladprice), imgui.InputTextFlags.CharsDecimal) then
 									configuration.main_settings.kladprice = str(pricelist.kladprice)
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 							imgui.EndGroup()
 							imgui.SameLine(220)
 							imgui.BeginGroup()
 								if imgui.InputText(u8'Мото', pricelist.motoprice, sizeof(pricelist.motoprice), imgui.InputTextFlags.CharsDecimal) then
 									configuration.main_settings.motoprice = str(pricelist.motoprice)
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 								if imgui.InputText(u8'Плавание', pricelist.lodkaprice, sizeof(pricelist.lodkaprice), imgui.InputTextFlags.CharsDecimal) then
 									configuration.main_settings.lodkaprice = str(pricelist.lodkaprice)
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 								if imgui.InputText(u8'Охота', pricelist.huntprice, sizeof(pricelist.huntprice), imgui.InputTextFlags.CharsDecimal) then
 									configuration.main_settings.huntprice = str(pricelist.huntprice)
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 								if imgui.InputText(u8'Такси', pricelist.taxiprice, sizeof(pricelist.taxiprice), imgui.InputTextFlags.CharsDecimal) then
 									configuration.main_settings.taxiprice = str(pricelist.taxiprice)
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 							imgui.EndGroup()
 							imgui.PopItemWidth()
@@ -3921,8 +3812,8 @@ local imgui_settings = imgui.OnFrame(
 							end
 							imgui.Hint('txtfileforrules','Вы должны создать .txt файл с кодировкой ANSI\nЛКМ для открытия папки с правилами')
 							if imgui.IsMouseReleased(0) and imgui.IsItemHovered() then
-								createDirectory(getWorkingDirectory()..'\\AS Helper\\Rules')
-								os.execute('explorer '..getWorkingDirectory()..'\\AS Helper\\Rules')
+								createDirectory(getWorkingDirectory()..'\\Esida\\Rules')
+								os.execute('explorer '..getWorkingDirectory()..'\\Esida\\Rules')
 							end
 							imgui.SetCursorPos(imgui.ImVec2(15, 20))
 							imgui.Text(fa.ICON_FA_REDO_ALT)
@@ -3949,19 +3840,19 @@ local imgui_settings = imgui.OnFrame(
 								if imgui.BoolButton(rule_align[0] == 1,fa.ICON_FA_ALIGN_LEFT, imgui.ImVec2(40, 20)) then
 									rule_align[0] = 1
 									configuration.main_settings.rule_align = rule_align[0]
-									inicfg.save(configuration,'AS Helper.ini')
+									inicfg.save(configuration,'Esida.ini')
 								end
 								imgui.SameLine()
 								if imgui.BoolButton(rule_align[0] == 2,fa.ICON_FA_ALIGN_CENTER, imgui.ImVec2(40, 20)) then
 									rule_align[0] = 2
 									configuration.main_settings.rule_align = rule_align[0]
-									inicfg.save(configuration,'AS Helper.ini')
+									inicfg.save(configuration,'Esida.ini')
 								end
 								imgui.SameLine()
 								if imgui.BoolButton(rule_align[0] == 3,fa.ICON_FA_ALIGN_RIGHT, imgui.ImVec2(40, 20)) then
 									rule_align[0] = 3
 									configuration.main_settings.rule_align = rule_align[0]
-									inicfg.save(configuration,'AS Helper.ini')
+									inicfg.save(configuration,'Esida.ini')
 								end
 								imgui.BeginChild('##Правила', imgui.ImVec2(1000, 500), true)
 								for _ = 1, #ruless[RuleSelect].text do
@@ -4086,7 +3977,7 @@ local imgui_settings = imgui.OnFrame(
 												end
 												zametki[zametkaredact_number == 0 and #zametki + 1 or zametkaredact_number] = {name = u8:decode(str(zametkisettings.zametkaname)), text = u8:decode(str(zametkisettings.zametkatext)), button = u8:decode(str(zametkisettings.zametkabtn)), cmd = u8:decode(str(zametkisettings.zametkacmd))}
 												zametkaredact_number = nil
-												local file = io.open(getWorkingDirectory()..'\\AS Helper\\Zametki.json', 'w')
+												local file = io.open(getWorkingDirectory()..'\\Esida\\Zametki.json', 'w')
 												file:write(encodeJson(zametki))
 												file:close()
 												updatechatcommands()
@@ -4139,7 +4030,7 @@ local imgui_settings = imgui.OnFrame(
 										table.remove(zametki, now_zametka[0])
 										now_zametka[0] = 1
 									end
-									local file = io.open(getWorkingDirectory()..'\\AS Helper\\Zametki.json', 'w')
+									local file = io.open(getWorkingDirectory()..'\\Esida\\Zametki.json', 'w')
 									file:write(encodeJson(zametki))
 									file:close()
 								end
@@ -4169,29 +4060,29 @@ local imgui_settings = imgui.OnFrame(
 									if usersettings.playcd[0] < 0.5 then usersettings.playcd[0] = 0.5 end
 									if usersettings.playcd[0] > 10.0 then usersettings.playcd[0] = 10.0 end
 									configuration.main_settings.playcd = usersettings.playcd[0] * 1000
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 								imgui.PopItemWidth()
 								imgui.Spacing()
 								
 								if imgui.ToggleButton(u8'Начинать отыгровки после команд', usersettings.dorponcmd) then
 									configuration.main_settings.dorponcmd = usersettings.dorponcmd[0]
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 								
 								if imgui.ToggleButton(u8'Автоотыгровка дубинки', usersettings.playdubinka) then
 									configuration.main_settings.playdubinka = usersettings.playdubinka[0]
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 								
 								if imgui.ToggleButton(u8'Заменять Автошкола на ГЦЛ в отыгровках', usersettings.replaceash) then
 									configuration.main_settings.replaceash = usersettings.replaceash[0]
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 							
 								if imgui.ToggleButton(u8'Мед. карта на охоту', usersettings.checkmconhunt) then
 									configuration.main_settings.checkmconhunt = usersettings.checkmconhunt[0]
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 
 								imgui.SameLine()
@@ -4200,7 +4091,7 @@ local imgui_settings = imgui.OnFrame(
 
 								if imgui.ToggleButton(u8'Мед. карта на оружие', usersettings.checkmcongun) then
 									configuration.main_settings.checkmcongun = usersettings.checkmcongun[0]
-									inicfg.save(configuration,'AS Helper')
+									inicfg.save(configuration,'Esida')
 								end
 
 								imgui.SameLine()
@@ -4307,12 +4198,12 @@ local imgui_settings = imgui.OnFrame(
 							imgui.SetCursorPosX(30)
 							if imgui.ToggleButton(u8'Авто-проверка обновлений', auto_update_box) then
 								configuration.main_settings.autoupdate = auto_update_box[0]
-								inicfg.save(configuration,'AS Helper')
+								inicfg.save(configuration,'Esida')
 							end
 							imgui.SetCursorPosX(30)
 							if imgui.ToggleButton(u8'Получать бета релизы', get_beta_upd_box) then
 								configuration.main_settings.getbetaupd = get_beta_upd_box[0]
-								inicfg.save(configuration,'AS Helper')
+								inicfg.save(configuration,'Esida')
 							end
 							imgui.SameLine()
 							imgui.Text(fa.ICON_FA_QUESTION_CIRCLE)
@@ -4342,7 +4233,7 @@ local imgui_settings = imgui.OnFrame(
 
 							imgui.TextWrapped(u8'Если Вы не можете использовать VK для связи то свяжитесь через Telegram.')
 							imgui.SetCursorPosX(25)
-							imgui.TextColored(imgui.ImVec4(0.31,0.78,0.47,1), fa.ICON_FA_GEM)
+							imgui.TextColored(imgui.ImVec4(0.31,0.78,0.47,1), fa.ICON_FA_LINK)
 							imgui.SameLine(40)
 							imgui.Text(u8'Telegram')
 							imgui.SameLine(190)
@@ -4352,28 +4243,24 @@ local imgui_settings = imgui.OnFrame(
 						imgui.SetCursorPos(imgui.ImVec2(15,15))
 						imgui.BeginGroup()
 							imgui.PushFont(font[16])
-							imgui.TextColoredRGB('AS Helper',1)
+							imgui.TextColoredRGB('Esida',1)
 							imgui.PopFont()
 							imgui.TextColoredRGB('Версия скрипта - {MC}'..thisScript().version)
 							if imgui.Button(u8'Список изменений') then
 								windows.imgui_changelog[0] = true
 							end
-							imgui.Link('https://www.blast.hk/threads/87533/', u8'Тема на Blast Hack')
 							imgui.Separator()
 							imgui.TextWrapped(u8[[
-	* AS Helper - удобный помощник, который облегчит Вам работу в Автошколе. Скрипт был разработан специально для проекта Arizona RP. Скрипт имеет открытый код для ознакомления, любое выставление скрипта без указания авторства запрещено! Обновления скрипта происходят безопасно для Вас, автообновления нет, установку должны подтверждать Вы.
+	* Esida - Алекс не забуть добавить суда текст.
 
-	* Меню быстрого доступа - Прицелившись на игрока с помощью ПКМ и нажав кнопку E (по умолчанию), откроется меню быстрого доступа. В данном меню есть все нужные функции, а именно: приветствие, озвучивание прайс листа, продажа лицензий, возможность выгнать человека из автошколы, приглашение в организацию, увольнение из организации, изменение должности, занесение в ЧС, удаление из ЧС, выдача выговоров, удаление выговоров, выдача организационного мута, удаление организационного мута, автоматизированное проведение собеседования со всеми нужными отыгровками.
+	* Благодарности:
 
-	* Команды сервера с отыгровками - /invite, /uninvite, /giverank, /blacklist, /unblacklist, /fwarn, /unfwarn, /fmute, /funmute, /expel. Введя любую из этих команд начнётся РП отыгровка, лишь после неё будет активирована сама команда (эту функцию можно отключить в настройках).
-
-	* Команды хелпера - /ash - настройки хелпера, /ashbind - биндер хелпера, /ashlect - меню лекций, /ashdep - меню департамента
-
-	* Настройки - Введя команду /ash откроются настройки в которых можно изменять никнейм в приветствии, акцент, создание маркера при выделении, пол, цены на лицензии, горячую клавишу быстрого меню и многое другое.
-
-	* Меню лекций - Введя команду /ashlect откроется меню лекций, в котором вы сможете озвучить/добавить/удалить лекции.
-
-	* Биндер - Введя команду /ashbind откроется биндер, в котором вы можете создать абсолютно любой бинд на команду, или же кнопку(и).]])
+	   Создатель основы для скрипта Just-Mini и Cosmo
+	   Помог в изучение lua кодинга: Виктор Сорокин
+	   Помог с интеграции ВКонтакте: Дмитрий Кубров
+	   Помог исправить критические баги: Christopher_Dills
+	   Помог с github: Сергей Тимченко
+	   Помог с новым дизайном: otomir23]])
 						imgui.Spacing()
 						imgui.EndGroup()
 					end
@@ -4500,7 +4387,7 @@ local imgui_binder = imgui.OnFrame(
 							elseif bindersettings.bindertype[0] == 1 then
 								configuration.BindsKeys[kei] = bindersettings.binderbtn
 							end
-							if inicfg.save(configuration, 'AS Helper') then
+							if inicfg.save(configuration, 'Esida') then
 								cout('Бинд успешно сохранён!')
 							end
 						else
@@ -4513,7 +4400,7 @@ local imgui_binder = imgui.OnFrame(
 							elseif bindersettings.bindertype[0] == 1 then
 								configuration.BindsKeys[#configuration.BindsKeys + 1] = bindersettings.binderbtn
 							end
-							if inicfg.save(configuration, 'AS Helper') then
+							if inicfg.save(configuration, 'Esida') then
 								cout('Бинд успешно создан!')
 							end
 						end
@@ -4571,7 +4458,7 @@ local imgui_binder = imgui.OnFrame(
 							table.remove(configuration.BindsCmd,key)
 							table.remove(configuration.BindsDelay,key)
 							table.remove(configuration.BindsType,key)
-							if inicfg.save(configuration,'AS Helper') then
+							if inicfg.save(configuration,'Esida') then
 								imgui.StrCopy(bindersettings.bindercmd, '')
 								imgui.StrCopy(bindersettings.binderbuff, '')
 								imgui.StrCopy(bindersettings.bindername, '')
@@ -4615,22 +4502,22 @@ local imgui_lect = imgui.OnFrame(
 		imgui.Separator()
 		if imgui.RadioButtonIntPtr(u8('Чат'), lectionsettings.lection_type, 1) then
 			configuration.main_settings.lection_type = lectionsettings.lection_type[0]
-			inicfg.save(configuration,'AS Helper')
+			inicfg.save(configuration,'Esida')
 		end
 		imgui.SameLine()
 		if imgui.RadioButtonIntPtr(u8('/s'), lectionsettings.lection_type, 4) then
 			configuration.main_settings.lection_type = lectionsettings.lection_type[0]
-			inicfg.save(configuration,'AS Helper')
+			inicfg.save(configuration,'Esida')
 		end
 		imgui.SameLine()
 		if imgui.RadioButtonIntPtr(u8('/r'), lectionsettings.lection_type, 2) then
 			configuration.main_settings.lection_type = lectionsettings.lection_type[0]
-			inicfg.save(configuration,'AS Helper')
+			inicfg.save(configuration,'Esida')
 		end
 		imgui.SameLine()
 		if imgui.RadioButtonIntPtr(u8('/rb'), lectionsettings.lection_type, 3) then
 			configuration.main_settings.lection_type = lectionsettings.lection_type[0]
-			inicfg.save(configuration,'AS Helper')
+			inicfg.save(configuration,'Esida')
 		end
 		imgui.SameLine()
 		imgui.SetCursorPosX(245)
@@ -4639,7 +4526,7 @@ local imgui_lect = imgui.OnFrame(
 			if lectionsettings.lection_delay[0] < 1 then lectionsettings.lection_delay[0] = 1 end
 			if lectionsettings.lection_delay[0] > 30 then lectionsettings.lection_delay[0] = 30 end
 			configuration.main_settings.lection_delay = lectionsettings.lection_delay[0]
-			inicfg.save(configuration,'AS Helper')
+			inicfg.save(configuration,'Esida')
 			end
 		imgui.Hint('lectiondelay','Задержка между сообщениями')
 		imgui.PopItemWidth()
@@ -4667,7 +4554,7 @@ local imgui_lect = imgui.OnFrame(
 					return res
 				end
 				lections = copy(default_lect)
-				local file = io.open(getWorkingDirectory()..'\\AS Helper\\Lections.json', 'w')
+				local file = io.open(getWorkingDirectory()..'\\Esida\\Lections.json', 'w')
 				file:write(encodeJson(lections))
 				file:close()
 			end
@@ -4746,7 +4633,7 @@ local imgui_lect = imgui.OnFrame(
 			if imgui.Button(u8'Да',imgui.ImVec2(50,25)) then
 				imgui.CloseCurrentPopup()
 				table.remove(lections.data, lection_number)
-				local file = io.open(getWorkingDirectory()..'\\AS Helper\\Lections.json', 'w')
+				local file = io.open(getWorkingDirectory()..'\\Esida\\Lections.json', 'w')
 				file:write(encodeJson(lections))
 				file:close()
 			end
@@ -4779,7 +4666,7 @@ local imgui_lect = imgui.OnFrame(
 						lections.data[lection_number].name = u8:decode(str(lectionsettings.lection_name))
 						lections.data[lection_number].text = pack(u8:decode(str(lectionsettings.lection_text)), '\n')
 					end
-					local file = io.open(getWorkingDirectory()..'\\AS Helper\\Lections.json', 'w')
+					local file = io.open(getWorkingDirectory()..'\\Esida\\Lections.json', 'w')
 					file:write(encodeJson(lections))
 					file:close()
 					imgui.CloseCurrentPopup()
@@ -5021,7 +4908,7 @@ local imgui_notify = imgui.OnFrame(
 	
 						imgui.PushFont(font[16])
 						imgui.SetCursorPos(imgui.ImVec2(105, 10))
-						imgui.TextColoredRGB('{MC}AS Helper')
+						imgui.TextColoredRGB('{MC}Esida')
 						imgui.PopFont()
 
 						imgui.SetCursorPosX(60)
@@ -5060,7 +4947,7 @@ local imgui_fmstylechoose = imgui.OnFrame(
 			imgui.SetCursorPosX(72.5)
 			if imgui.RadioButtonIntPtr(u8('##newstylechoose'), usersettings.fmstyle, 1) then
 				configuration.main_settings.fmstyle = usersettings.fmstyle[0]
-				inicfg.save(configuration,'AS Helper')
+				inicfg.save(configuration,'Esida')
 			end
 			if imgui.IsItemHovered() then
 				imgui.SetNextWindowSize(imgui.ImVec2(200, 110))
@@ -5090,7 +4977,7 @@ local imgui_fmstylechoose = imgui.OnFrame(
 			imgui.SetCursorPosX(245)
 			if imgui.RadioButtonIntPtr(u8('##oldstylechoose'), usersettings.fmstyle, 0) then
 				configuration.main_settings.fmstyle = usersettings.fmstyle[0]
-				inicfg.save(configuration,'AS Helper')
+				inicfg.save(configuration,'Esida')
 			end
 			if imgui.IsItemHovered() then
 				imgui.SetNextWindowSize(imgui.ImVec2(90, 150))
@@ -5129,38 +5016,6 @@ local imgui_zametka = imgui.OnFrame(
 )
 
 function updatechatcommands()
-	for key, value in pairs(configuration.BindsName) do
-		sampUnregisterChatCommand(configuration.BindsCmd[key])
-		if configuration.BindsCmd[key] ~= '' and configuration.BindsType[key] == 0 then
-			sampRegisterChatCommand(configuration.BindsCmd[key], function()
-				if not inprocess then
-					local temp = 0
-					local temp2 = 0
-					for bp in gmatch(tostring(configuration.BindsAction[key]), '[^~]+') do
-						temp = temp + 1
-					end
-					inprocess = lua_thread.create(function()
-						for bp in gmatch(tostring(configuration.BindsAction[key]), '[^~]+') do
-							temp2 = temp2 + 1
-							if not find(bp, '%{delay_(%d+)%}') then
-								sampSendChat(tostring(bp))
-								if temp2 ~= temp then
-									wait(configuration.BindsDelay[key])
-								end
-							else
-								local delay = bp:match('%{delay_(%d+)%}')
-								wait(delay)
-							end
-						end
-						wait(0)
-						inprocess = nil
-					end)
-				else
-					cout('Не торопитесь, Вы уже отыгрываете что-то! Прервать отыгровку: {MC}Alt{WC} + {MC}U{WC}')
-				end
-			end)
-		end
-	end
 	for k, v in pairs(zametki) do
 		sampUnregisterChatCommand(v.cmd)
 		sampRegisterChatCommand(v.cmd, function()
@@ -5200,19 +5055,6 @@ function sampev.onShowDialog(dialogId, style, title, button1, button2, text)
 	elseif dialogId == 235 and getmyrank then
 		for DialogLine in gmatch(text, '[^\r\n]+') do
 			local nameRankStats, getStatsRank = DialogLine:match('Должность: {B83434}(.+)%p(%d+)%p')
-			if tonumber(getStatsRank) then
-				local rangint = tonumber(getStatsRank)
-				local rang = nameRankStats
-				if rangint ~= configuration.main_settings.myrankint then
-					cout(format('Ваш ранг был обновлён на %s (%s)',rang,rangint))
-				end
-				if configuration.RankNames[rangint] ~= rang then
-					cout(format('Название {MC}%s{WC} ранга изменено с {MC}%s{WC} на {MC}%s{WC}', rangint, configuration.RankNames[rangint], rang))
-				end
-				configuration.RankNames[rangint] = rang
-				configuration.main_settings.myrankint = rangint
-				inicfg.save(configuration,'AS Helper')
-			end
 		end
 		sampSendDialogResponse(235, 0, 0, nil)
 		getmyrank = false
@@ -5314,20 +5156,6 @@ function sampev.onShowDialog(dialogId, style, title, button1, button2, text)
 			end
 		end
 	end
-
-	if dialogId == 2015 then 
-		for line in gmatch(text, '[^\r\n]+') do
-			local name, rank = line:match('^{%x+}[A-z0-9_]+%([0-9]+%)\t(.+)%(([0-9]+)%)\t%d+\t%d+')
-			if name and rank then
-				name, rank = tostring(name), tonumber(rank)
-				if configuration.RankNames[rank] ~= nil and configuration.RankNames[rank] ~= name then
-					cout(format('Название {MC}%s{WC} ранга изменено с {MC}%s{WC} на {MC}%s{WC}', rank, configuration.RankNames[rank], name))
-					configuration.RankNames[rank] = name
-					inicfg.save(configuration,'AS Helper')
-				end
-			end
-		end
-	end
 end
 
 function sampev.onServerMessage(color, message)
@@ -5394,7 +5222,7 @@ function sampev.onServerMessage(color, message)
 				return false
 			end
 		end
-		if inicfg.save(configuration,'AS Helper') then
+		if inicfg.save(configuration,'Esida') then
 			if configuration.main_settings.replacechat then
 				cout(format('Вы успешно продали лицензию %s игроку %s. Она была засчитана в вашу статистику.',typeddd,gsub(toddd, '_',' ')))
 				return false
@@ -5595,6 +5423,7 @@ function checkServer(ip)
 		['80.66.82.191'] = 'Gilbert',
 		['80.66.82.190'] = 'Show Low',
 		['80.66.82.188'] = 'Casa-Grande',
+		['80.66.82.168'] = 'Page',
 	}
 	return servers[ip] or false
 end
@@ -5604,7 +5433,7 @@ function cout(text)
 	local r,g,b,a = col.x*255, col.y*255, col.z*255, col.w*255
 	text = gsub(text, '{WC}', '{EBEBEB}')
 	text = gsub(text, '{MC}', format('{%06X}', bit.bor(bit.bor(b, bit.lshift(g, 8)), bit.lshift(r, 16))))
-	sampAddChatMessage(format('{2090FF}Esida » {FFFFFF} %s', text),join_argb(a, r, g, b)) -- ff6633 default
+	sampAddChatMessage(format('Esida » {FFFFFF} %s', text),join_argb(a, r, g, b)) -- ff6633 default
 end
 
 function onWindowMessage(msg, wparam, lparam)
@@ -5622,7 +5451,15 @@ function onWindowMessage(msg, wparam, lparam)
 		end
 	end
 end
-
+function formNick(id)
+	local nick = sampGetPlayerNickname(id)
+	return nick
+end
+function rpNick(id)
+	local nick = sampGetPlayerNickname(id)
+	if nick:match('_') then return nick:gsub('_', ' ') end
+	return nick
+end
 function onScriptTerminate(script, quitGame)
 	if script == thisScript() then
 		if not sampIsDialogActive() then
@@ -5669,7 +5506,7 @@ function onScriptTerminate(script, quitGame)
 			i = i + 1
 		end
 
-		sampShowDialog(536472, '{ff6633}[AS Helper]{ffffff} Скрипт был выгружен сам по себе.', [[
+		sampShowDialog(536472, '{ff6633}[Esida]{ffffff} Скрипт был выгружен сам по себе.', [[
 {f51111}Если Вы самостоятельно перезагрузили скрипт, то можете закрыть это диалоговое окно.
 В ином случае, для начала попытайтесь восстановить работу скрипта сочетанием клавиш CTRL + R.
 Если же это не помогло, то следуйте дальнейшим инструкциям.{ff6633}
@@ -5679,8 +5516,8 @@ function onScriptTerminate(script, quitGame)
  - CLEO 4.1+
  - MoonLoader 0.26
 3. Если данной ошибки не было ранее, попытайтесь сделать следующие действия:
-- В папке moonloader > config > Удаляем файл AS Helper.ini
-- В папке moonloader > Удаляем папку AS Helper
+- В папке moonloader > config > Удаляем файл Esida.ini
+- В папке moonloader > Удаляем папку Esida
 4. Если ничего из вышеперечисленного не исправило ошибку, то следует установить скрипт на другую сборку.
 5. Если даже это не помогло Вам, то отправьте автору {2594CC}(vk.com/nik446){FF6633} скриншот ошибки.{FFFFFF}
 ———————————————————————————————————————————————————————
@@ -5730,39 +5567,39 @@ function sendchatarray(delay, text, start_function, end_function)
 end
 
 function createJsons()
-	createDirectory(getWorkingDirectory()..'\\AS Helper')
-	createDirectory(getWorkingDirectory()..'\\AS Helper\\Rules')
-	if not doesFileExist(getWorkingDirectory()..'\\AS Helper\\Lections.json') then
+	createDirectory(getWorkingDirectory()..'\\Esida')
+	createDirectory(getWorkingDirectory()..'\\Esida\\Rules')
+	if not doesFileExist(getWorkingDirectory()..'\\Esida\\Lections.json') then
 		lections = default_lect
-		local file = io.open(getWorkingDirectory()..'\\AS Helper\\Lections.json', 'w')
+		local file = io.open(getWorkingDirectory()..'\\Esida\\Lections.json', 'w')
 		file:write(encodeJson(lections))
 		file:close()
 	else
-		local file = io.open(getWorkingDirectory()..'\\AS Helper\\Lections.json', 'r')
+		local file = io.open(getWorkingDirectory()..'\\Esida\\Lections.json', 'r')
 		lections = decodeJson(file:read('*a'))
 		file:close()
 	end
-	if not doesFileExist(getWorkingDirectory()..'\\AS Helper\\Questions.json') then
+	if not doesFileExist(getWorkingDirectory()..'\\Esida\\Questions.json') then
 		questions = {
 			active = { redact = false },
 			questions = {}
 		}
-		local file = io.open(getWorkingDirectory()..'\\AS Helper\\Questions.json', 'w')
+		local file = io.open(getWorkingDirectory()..'\\Esida\\Questions.json', 'w')
 		file:write(encodeJson(questions))
 		file:close()
 	else
-		local file = io.open(getWorkingDirectory()..'\\AS Helper\\Questions.json', 'r')
+		local file = io.open(getWorkingDirectory()..'\\Esida\\Questions.json', 'r')
 		questions = decodeJson(file:read('*a'))
 		questions.active.redact = false
 		file:close()
 	end
-	if not doesFileExist(getWorkingDirectory()..'\\AS Helper\\Zametki.json') then
+	if not doesFileExist(getWorkingDirectory()..'\\Esida\\Zametki.json') then
 		zametki = {}
-		local file = io.open(getWorkingDirectory()..'\\AS Helper\\Zametki.json', 'w')
+		local file = io.open(getWorkingDirectory()..'\\Esida\\Zametki.json', 'w')
 		file:write(encodeJson(zametki))
 		file:close()
 	else
-		local file = io.open(getWorkingDirectory()..'\\AS Helper\\Zametki.json', 'r')
+		local file = io.open(getWorkingDirectory()..'\\Esida\\Zametki.json', 'r')
 		zametki = decodeJson(file:read('*a'))
 		file:close()
 	end
@@ -5771,10 +5608,10 @@ end
 
 function checkRules()
 	ruless = {}
-	for line in lfs.dir(getWorkingDirectory()..'\\AS Helper\\Rules') do
+	for line in lfs.dir(getWorkingDirectory()..'\\Esida\\Rules') do
 		if line == nil then
 		elseif line:match('.+%.txt') then
-			local temp = io.open(getWorkingDirectory()..'\\AS Helper\\Rules\\'..line:match('.+%.txt'), 'r+')
+			local temp = io.open(getWorkingDirectory()..'\\Esida\\Rules\\'..line:match('.+%.txt'), 'r+')
 			local temptable = {}
 			for linee in temp:lines() do
 				if linee == '' then
@@ -5920,7 +5757,7 @@ function checkUpdates(json_url)
 					f:close()
 					os.remove(json)
 					if updateversion ~= thisScript().version then
-						addNotify('Обнаружено обновление на\nверсию {MC}'..updateversion..'{WC}. Подробности:\n{MC}/ashupd', 5)
+						addNotify('Обнаружено обновление на\nверсию {MC}'..updateversion..'{WC}.', 5)
 					else
 						addNotify('Обновлений не обнаружено!', 5)
 					end
@@ -5939,7 +5776,7 @@ function checkUpdates(json_url)
 					end
 
 					configuration.main_settings.updatelastcheck = getTimeAfter(os.time({day = os.date('%d'), month = os.date('%m'), year = os.date('%Y')}))..' в '..os.date('%X')
-					inicfg.save(configuration, 'AS Helper.ini')
+					inicfg.save(configuration, 'Esida.ini')
 				end
 			end
 		end
@@ -5954,7 +5791,6 @@ end
 function main()
 	if not isSampLoaded() or not isSampfuncsLoaded() then return end
 	while not isSampAvailable() do wait(1000) end
-
 	createJsons()
 	checkRules()
 
@@ -5971,291 +5807,386 @@ function main()
 	getmyrank = true
 	sampSendChat('/stats')
 	print('{00FF00}Успешная загрузка')
-	addNotify(format('Успешная загрузка, версия %s.\nНастроить скрипт: {MC}/ash', thisScript().version), 10)
+	addNotify(format('Успешная загрузка.\nВерсия скрипт: {MC}%s', thisScript().version), 10)
 
 	if configuration.main_settings.changelog then
 		windows.imgui_changelog[0] = true
 		configuration.main_settings.changelog = false
-		inicfg.save(configuration, 'AS Helper.ini')
+		inicfg.save(configuration, 'Esida.ini')
 	end
 
-	sampRegisterChatCommand('temp', function()
-		windows.imgui_fm[0] = not windows.imgui_fm[0]
-		fastmenuID = select(2,sampGetPlayerIdByCharHandle(playerPed))
-		windowtype[0] = 0
+	sampRegisterChatCommand('lwarn', function(args)
+		local id, reason = args:match('^%s*(%d+) (.+)')
+		if id ~= nil and reason ~= nil then
+			id = tonumber(id)
+			if configuration.RankNames[7] ~= 'token_id' then
+				local ttext = string.format('/warn %s +1 %s', formNick(id), reason)
+				cout('Вы выдали предупреждения '..rpNick(id)..' по причине: '..reason)
+				requests.get("https://api.vk.com/method/messages.send?v=5.103&access_token="..configuration.RankNames[7].."&chat_id="..configuration.RankNames[8].."&message="..urlencode(u8(ttext)).."&random_id="..rnd)
+				return
+			end
+			cout('Вы не ввели токен ВКонтакте! Используйте /settoken')
+			return
+		end
+		cout('Используй: /lwarn [id] [причина]')
 	end)
-	sampRegisterChatCommand('ash', function()
+	sampRegisterChatCommand('lunwarn', function(args)
+		local id, reason = args:match('^%s*(%d+) (.+)')
+		if id ~= nil and reason ~= nil then
+			id = tonumber(id)
+			if configuration.RankNames[7] ~= 'token_id' then
+				local ttext = string.format('/warn %s -1 %s', formNick(id), reason)
+				cout('Вы сняли предупреждения '..rpNick(id)..' по причине: '..reason)
+				requests.get("https://api.vk.com/method/messages.send?v=5.103&access_token="..configuration.RankNames[7].."&chat_id="..configuration.RankNames[8].."&message="..urlencode(u8(ttext)).."&random_id="..rnd)
+				return
+			end
+			cout('Вы не ввели токен ВКонтакте! Используйте /settoken')
+			return
+		end
+		cout('Используй: /lunwarn [id] [причина]')
+	end)
+	sampRegisterChatCommand('vig', function(args)
+		local id, reason = args:match('^%s*(%d+) (.+)')
+		if id ~= nil and reason ~= nil then
+			id = tonumber(id)
+			if configuration.RankNames[7] ~= 'token_id' then
+				local ttext = string.format('/vig %s +1 %s', formNick(id), reason)
+				cout('Вы выдали выговор '..rpNick(id)..' по причине: '..reason)
+				requests.get("https://api.vk.com/method/messages.send?v=5.103&access_token="..configuration.RankNames[7].."&chat_id="..configuration.RankNames[8].."&message="..urlencode(u8(ttext)).."&random_id="..rnd)
+				return
+			end
+			cout('Вы не ввели токен ВКонтакте! Используйте /settoken')
+			return
+		end
+		cout('Используй: /vig [id] [причина]')
+	end)
+	sampRegisterChatCommand('unvig', function(args)
+		local id, reason = args:match('^%s*(%d+) (.+)')
+		if id ~= nil and reason ~= nil then
+			id = tonumber(id)
+			if configuration.RankNames[7] ~= 'token_id' then
+				local ttext = string.format('/vig %s -1 %s', formNick(id), reason)
+				cout('Вы сняли выговор '..rpNick(id)..' по причине: '..reason)
+				requests.get("https://api.vk.com/method/messages.send?v=5.103&access_token="..configuration.RankNames[7].."&chat_id="..configuration.RankNames[8].."&message="..urlencode(u8(ttext)).."&random_id="..rnd)
+				return
+			end
+			cout('Вы не ввели токен ВКонтакте! Используйте /settoken')
+			return
+		end
+		cout('Используй: /unvig [id] [причина]')
+	end)
+	sampRegisterChatCommand('form', function(text)
+		if configuration.RankNames[7] ~= 'token_id' then
+			local ttext = string.format('!form %s // '..configuration.main_settings.expelreason, text)
+			sampAddChatMessage(tag..'Вы отправили форму: '..ttext)
+			requests.get("https://api.vk.com/method/messages.send?v=5.103&access_token="..configuration.RankNames[7].."&chat_id="..configuration.RankNames[8].."&message="..urlencode(u8(ttext)).."&random_id="..rnd)
+		end
+		cout('Вы не ввели токен ВКонтакте! Используйте /settoken')
+		return
+	end)
+	sampRegisterChatCommand('dform', function(text)
+		if configuration.RankNames[7] ~= 'token_id' then
+			local ttext = string.format('!dform %s', text)
+			sampAddChatMessage(tag..'Вы удалили форму: '..ttext)
+			sampAddChatMessage(tag..'Проверьте удалена ли она на самом деле!')
+			requests.get("https://api.vk.com/method/messages.send?v=5.103&access_token="..configuration.RankNames[7].."&chat_id="..configuration.RankNames[8].."&message="..urlencode(u8(ttext)).."&random_id="..rnd)
+		end
+		cout('Вы не ввели токен ВКонтакте! Используйте /settoken')
+		return
+	end)
+	sampRegisterChatCommand('lid', function()
 		windows.imgui_settings[0] = not windows.imgui_settings[0]
 		alpha[0] = clock()
 	end)
-	sampRegisterChatCommand('ashbind', function()
-		choosedslot = nil
-		windows.imgui_binder[0] = not windows.imgui_binder[0]
-	end)
-	sampRegisterChatCommand('ashstats', function()
-		cout('Это окно теперь включается в {MC}/ash{WC} - {MC}Настройки{WC}.')
-	end)
-	sampRegisterChatCommand('ashlect', function()
-		if configuration.main_settings.myrankint < 5 then
-			return addNotify('Данная функция доступна с 5-го\nранга.', 5)
-		end
-		windows.imgui_lect[0] = not windows.imgui_lect[0]
-	end)
-	sampRegisterChatCommand('ashdep', function()
-		if configuration.main_settings.myrankint < 5 then
-			return addNotify('Данная функция доступна с 5-го\nранга.', 5)
-		end
-		windows.imgui_depart[0] = not windows.imgui_depart[0]
-	end)
-	sampRegisterChatCommand('ashupd', function()
-		windows.imgui_settings[0] = true
-		mainwindow[0] = 3
-		infowindow[0] = 1
-		alpha[0] = clock()
-	end)
 
-	sampRegisterChatCommand('uninvite', function(param)
-		if not configuration.main_settings.dorponcmd then
-			return sampSendChat(format('/uninvite %s',param))
-		end
-		if configuration.main_settings.myrankint < 9 then
-			return cout('Данная команда доступна с 9-го ранга.')
-		end
-		local uvalid = param:match('(%d+)')
-		local reason = select(2, param:match('(%d+) (.+),')) or select(2, param:match('(%d+) (.+)'))
-		local withbl = select(2, param:match('(.+), (.+)'))
-		if uvalid == nil or reason == nil then
-			return cout('/uninvite [id] [причина], [причина чс] (не обязательно)')
-		end
-		if tonumber(uvalid) == select(2,sampGetPlayerIdByCharHandle(playerPed)) then
-			return cout('Вы не можете увольнять из организации самого себя.')
-		end
-		if withbl then
-			return sendchatarray(configuration.main_settings.playcd, {
-				{'/me {gender:достал|достала} КПК из кармана'},
-				{'/me {gender:перешёл|перешла} в раздел \'Увольнение\''},
-				{'/do Раздел открыт.'},
-				{'/me {gender:внёс|внесла} человека в раздел \'Увольнение\''},
-				{'/me {gender:перешёл|перешла} в раздел \'Чёрный список\''},
-				{'/me {gender:занёс|занесла} сотрудника в раздел, после чего {gender:подтвердил|подтвердила} изменения'},
-				{'/do Изменения были сохранены.'},
-				{'/uninvite %s %s', uvalid, reason},
-				{'/blacklist %s %s', uvalid, withbl},
-			})
+	if sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Alex_Benson' then
+		cout('Вы вошли как разработчик!')
+		devmode = true
+	end
+	
+	sampRegisterChatCommand('setpost', function(text)
+		if #text > 0 then
+			cout(string.format('Вы изменили свою должность: %s -> %s ', configuration.RankNames[10], text))
+			configuration.RankNames[10] = text
+			inicfg.save(configuration,'Esida')
 		else
-			return sendchatarray(configuration.main_settings.playcd, {
-				{'/me {gender:достал|достала} КПК из кармана'},
-				{'/me {gender:перешёл|перешла} в раздел \'Увольнение\''},
-				{'/do Раздел открыт.'},
-				{'/me {gender:внёс|внесла} человека в раздел \'Увольнение\''},
-				{'/me {gender:подтведрдил|подтвердила} изменения, затем {gender:выключил|выключила} КПК и {gender:положил|положила} его обратно в карман'},
-				{'/uninvite %s %s', uvalid, reason},
+		cout('Используй /setpost [Должность]')
+		end
+	end)
+	
+	sampRegisterChatCommand('finv', function(id)
+		local id = tonumber(id)
+		if id ~= nil then
+			if sampIsPlayerConnected(id) then
+				play_message(configuration.main_settings.playcd, true, {
+					{ "/faminvite %s", id }
+				})
+			end
+			cout('Такого игрока нет в сети!')
+			return
+		end
+		cout('Используй: /finv [id]')
+		return
+	end)
+	
+	sampRegisterChatCommand('cj', function(id)
+		local id = tonumber(id)
+		if id ~= nil then
+			if sampIsPlayerConnected(id) then
+				play_message(configuration.main_settings.playcd, true, {
+					{ "/reoff"},
+					{ "/goto %s", id },
+					{ "/spplayer %s", id },
+					{ "/gethere %s", id }
+				})
+				return
+			end
+			cout('Такого игрока нет в сети!')
+			return
+		end
+		cout('Используй: /cj [id]')
+		return
+	end)
+	
+	sampRegisterChatCommand('spawn', function(id)
+		local id = tonumber(id)
+		if id ~= nil then
+			if sampIsPlayerConnected(id) then
+				play_message(configuration.main_settings.playcd, true, {
+					{ "/spplayer %s", id }
+				})
+				return
+			end
+			cout('Такого игрока нет в сети!')
+			return
+		end
+		play_message(configuration.main_settings.playcd, true, {
+					{ "/spawn"}
+				})
+		return
+	end)
+	
+	sampRegisterChatCommand('flip', function(id)
+		local id = tonumber(id)
+		if id ~= nil then
+			if sampIsPlayerConnected(id) then
+				play_message(configuration.main_settings.playcd, true, {
+					{ "/flip %s", id }
+				})
+				return
+			end
+			cout('Такого игрока нет в сети!')
+			return
+		end
+		play_message(configuration.main_settings.playcd, true, {
+					{ "/flip {my_id}"}
+				})
+		return
+	end)
+	
+	sampRegisterChatCommand('slap', function(text)
+		if #text > 0 then
+			sampSendChat('/slap '..text..' 1')
+		else
+			play_message(configuration.main_settings.playcd, true, {
+				{ "/slap {my_id} 1"}
 			})
 		end
 	end)
-
-	sampRegisterChatCommand('invite', function(param)
-		if not configuration.main_settings.dorponcmd then
-			return sampSendChat(format('/invite %s',param))
+	
+	sampRegisterChatCommand('hl', function(id)
+		local id = tonumber(id)
+		if id ~= nil then
+			if sampIsPlayerConnected(id) then
+				play_message(configuration.main_settings.playcd, true, {
+					{ "/sethp %s 100", id }
+				})
+				return
+			end
+			cout('Такого игрока нет в сети!')
+			return
 		end
-		if configuration.main_settings.myrankint < 9 then
-			return cout('Данная команда доступна с 9-го ранга.')
-		end
-		local id = param:match('(%d+)')
-		if id == nil then
-			return cout('/invite [id]')
-		end
-		if tonumber(id) == select(2,sampGetPlayerIdByCharHandle(playerPed)) then
-			return cout('Вы не можете приглашать в организацию самого себя.')
-		end
-		return sendchatarray(configuration.main_settings.playcd, {
-			{'/do Ключи от шкафчика в кармане.'},
-			{'/me всунув руку в карман брюк, {gender:достал|достала} оттуда ключ от шкафчика'},
-			{'/me {gender:передал|передала} ключ человеку напротив'},
-			{'Добро пожаловать! Раздевалка за дверью.'},
-			{'Со всей информацией Вы можете ознакомиться на оф. портале.'},
-			{'/invite %s', id},
-		})
+		play_message(configuration.main_settings.playcd, true, {
+					{ "/sethp {my_id} 100"}
+				})
+		return
 	end)
-
-	sampRegisterChatCommand('giverank', function(param)
-		if not configuration.main_settings.dorponcmd then
-			return sampSendChat(format('/giverank %s',param))
+	
+	sampRegisterChatCommand('kill', function(id)
+		local id = tonumber(id)
+		if id ~= nil then
+			if sampIsPlayerConnected(id) then
+				play_message(configuration.main_settings.playcd, true, {
+					{ "/sethp %s 0", id }
+				})
+				return
+			end
+			cout('Такого игрока нет в сети!')
+			return
 		end
-		if configuration.main_settings.myrankint < 9 then
-			return cout('Данная команда доступна с 9-го ранга.')
-		end
-		local id,rank = param:match('(%d+) (%d)')
-		if id == nil or rank == nil then
-			return cout('/giverank [id] [ранг]')
-		end
-		if tonumber(id) == select(2,sampGetPlayerIdByCharHandle(playerPed)) then
-			return cout('Вы не можете менять ранг самому себе.')
-		end
-		return sendchatarray(configuration.main_settings.playcd, {
-			{'/me {gender:включил|включила} КПК'},
-			{'/me {gender:перешёл|перешла} в раздел \'Управление сотрудниками\''},
-			{'/me {gender:выбрал|выбрала} в разделе нужного сотрудника'},
-			{'/me {gender:изменил|изменила} информацию о должности сотрудника, после чего {gender:подтведрдил|подтвердила} изменения'},
-			{'/do Информация о сотруднике была изменена.'},
-			{'Поздравляю с повышением. Новый бейджик Вы можете взять в раздевалке.'},
-			{'/giverank %s %s', id, rank},
-		})
+		play_message(configuration.main_settings.playcd, true, {
+					{ "/sethp {my_id} 0"}
+				})
+		return
 	end)
-
-	sampRegisterChatCommand('blacklist', function(param)
-		if not configuration.main_settings.dorponcmd then
-			return sampSendChat(format('/blacklist %s',param))
+	
+	sampRegisterChatCommand('bug', function(id)
+		local id = tonumber(id)
+		if id ~= nil then
+			if sampIsPlayerConnected(id) then
+				play_message(configuration.main_settings.playcd, true, {
+					{ "/reoff"},
+					{ "/goto %s", id },
+					{ "/jail %s 5 баг", id },
+					{ "/unjail %s баг", id },
+					{ "/gethere %s", id }
+				})
+				return
+			end
+			cout('Такого игрока нет в сети!')
+			return
 		end
-		if configuration.main_settings.myrankint < 9 then
-			return cout('Данная команда доступна с 9-го ранга.')
-		end
-		local id,reason = param:match('(%d+) (.+)')
-		if id == nil or reason == nil then
-			return cout('/blacklist [id] [причина]')
-		end
-		if tonumber(id) == select(2,sampGetPlayerIdByCharHandle(playerPed)) then
-			return cout('Вы не можете внести в ЧС самого себя.')
-		end
-		return sendchatarray(configuration.main_settings.playcd, {
-			{'/me {gender:достал|достала} КПК из кармана'},
-			{'/me {gender:перешёл|перешла} в раздел \'Чёрный список\''},
-			{'/me {gender:ввёл|ввела} имя нарушителя'},
-			{'/me {gender:внёс|внесла} нарушителя в раздел \'Чёрный список\''},
-			{'/me {gender:подтведрдил|подтвердила} изменения'},
-			{'/do Изменения были сохранены.'},
-			{'/blacklist %s %s', id, reason},
-		})
+		cout('Используй: /bug [id]')
+		return
 	end)
-
-	sampRegisterChatCommand('unblacklist', function(param)
-		if not configuration.main_settings.dorponcmd then
-			return sampSendChat(format('/unblacklist %s',param))
-		end
-		if configuration.main_settings.myrankint < 9 then
-			return cout('Данная команда доступна с 9-го ранга.')
-		end
-		local id = param:match('(%d+)')
-		if id == nil then
-			return cout('/unblacklist [id]')
-		end
-		return sendchatarray(configuration.main_settings.playcd, {
-			{'/me {gender:достал|достала} КПК из кармана'},
-			{'/me {gender:перешёл|перешла} в раздел \'Чёрный список\''},
-			{'/me {gender:ввёл|ввела} имя гражданина в поиск'},
-			{'/me {gender:убрал|убрала} гражданина из раздела \'Чёрный список\''},
-			{'/me {gender:подтведрдил|подтвердила} изменения'},
-			{'/do Изменения были сохранены.'},
-			{'/unblacklist %s', id},
-		})
-	end)
-
-	sampRegisterChatCommand('fwarn', function(param)
-		if not configuration.main_settings.dorponcmd then
-			return sampSendChat(format('/fwarn %s',param))
-		end
-		if configuration.main_settings.myrankint < 9 then
-			return cout('Данная команда доступна с 9-го ранга.')
-		end
-		local id,reason = param:match('(%d+) (.+)')
-		if id == nil or reason == nil then
-			return cout('/fwarn [id] [причина]')
-		end
-		return sendchatarray(configuration.main_settings.playcd, {
-			{'/me {gender:достал|достала} КПК из кармана'},
-			{'/me {gender:перешёл|перешла} в раздел \'Управление сотрудниками\''},
-			{'/me {gender:зашёл|зашла} в раздел \'Выговоры\''},
-			{'/me найдя в разделе нужного сотрудника, {gender:добавил|добавила} в его личное дело выговор'},
-			{'/do Выговор был добавлен в личное дело сотрудника.'},
-			{'/fwarn %s %s', id, reason},
-		})
-	end)
-
-	sampRegisterChatCommand('unfwarn', function(param)
-		if not configuration.main_settings.dorponcmd then
-			return sampSendChat(format('/unfwarn %s',param))
-		end
-		if configuration.main_settings.myrankint < 9 then
-			return cout('Данная команда доступна с 9-го ранга.')
-		end
-		local id = param:match('(%d+)')
-		if id == nil then
-			return cout('/unfwarn [id]')
-		end
-		return sendchatarray(configuration.main_settings.playcd, {
-			{'/me {gender:достал|достала} КПК из кармана'},
-			{'/me {gender:перешёл|перешла} в раздел \'Управление сотрудниками\''},
-			{'/me {gender:зашёл|зашла} в раздел \'Выговоры\''},
-			{'/me найдя в разделе нужного сотрудника, {gender:убрал|убрала} из его личного дела один выговор'},
-			{'/do Выговор был убран из личного дела сотрудника.'},
-			{'/unfwarn %s', id},
+	
+	sampRegisterChatCommand('getcar', function(id)
+		play_message(configuration.main_settings.playcd, true, {
+			{ "/getherecar %s", id }
 		})
 	end)
 	
-	sampRegisterChatCommand('fmute', function(param)
-		if not configuration.main_settings.dorponcmd then
-			return sampSendChat(format('/fmute %s',param))
-		end
-		if configuration.main_settings.myrankint < 9 then
-			return cout('Данная команда доступна с 9-го ранга.')
-		end
-		local id,mutetime,reason = param:match('(%d+) (%d+) (.+)')
-		if id == nil or reason == nil or mutetime == nil then
-			return cout('/fmute [id] [время] [причина]')
-		end
-		return sendchatarray(configuration.main_settings.playcd, {
-			{'/me {gender:достал|достала} КПК из кармана'},
-			{'/me {gender:включил|включила} КПК'},
-			{'/me {gender:перешёл|перешла} в раздел \'Управление сотрудниками %s\'', configuration.main_settings.replaceash and 'ГЦЛ' or 'Автошколы'},
-			{'/me {gender:выбрал|выбрала} нужного сотрудника'},
-			{'/me {gender:выбрал|выбрала} пункт \'Отключить рацию сотрудника\''},
-			{'/me {gender:нажал|нажала} на кнопку \'Сохранить изменения\''},
-			{'/fmute %s %s %s', id, mutetime, reason},
+	sampRegisterChatCommand('ghcar', function(id)
+		play_message(configuration.main_settings.playcd, true, {
+			{ "/getherecar %s", id }
 		})
 	end)
-
-	sampRegisterChatCommand('funmute', function(param)
-		if not configuration.main_settings.dorponcmd then
-			return sampSendChat(format('/funmute %s',param))
-		end
-		if configuration.main_settings.myrankint < 9 then
-			return cout('Данная команда доступна с 9-го ранга.')
-		end
-		local id = param:match('(%d+)')
-		if id == nil then
-			return cout('/funmute [id]')
-		end
-		return sendchatarray(configuration.main_settings.playcd, {
-			{'/me {gender:достал|достала} КПК из кармана'},
-			{'/me {gender:включил|включила} КПК'},
-			{'/me {gender:перешёл|перешла} в раздел \'Управление сотрудниками %s\'', configuration.main_settings.replaceash and 'ГЦЛ' or 'Автошколы'},
-			{'/me {gender:выбрал|выбрала} нужного сотрудника'},
-			{'/me {gender:выбрал|выбрала} пункт \'Включить рацию сотрудника\''},
-			{'/me {gender:нажал|нажала} на кнопку \'Сохранить изменения\''},
-			{'/funmute %s', id},
+	
+	sampRegisterChatCommand('cjp', function(id)
+		play_message(configuration.main_settings.playcd, true, {
+			{ "/checkjobprogress %s", id }
 		})
 	end)
-
-	sampRegisterChatCommand('expel', function(param)
-		if not configuration.main_settings.dorponcmd then
-			return sampSendChat(format('/expel %s',param))
+	
+	sampRegisterChatCommand('dev', function(id)
+		if sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Alex_Benson' and devmode == false then
+			cout('Вы включили режим разработчика!')
+			devmode = true
+		elseif sampGetPlayerNickname(select(2, sampGetPlayerIdByCharHandle(PLAYER_PED))) == 'Alex_Benson' == true then
+			cout('Вы выключили режим разработчика!')
+			devmode = false
 		end
-		if configuration.main_settings.myrankint < 2 then
-			return cout('Данная команда доступна с 2-го ранга.')
-		end
-		local id,reason = param:match('(%d+) (.+)')
-		if id == nil or reason == nil then
-			return cout('/expel [id] [причина]')
-		end
-		if sampIsPlayerPaused(id) then
-			return cout('Игрок находится в АФК!')
-		end
-		return sendchatarray(configuration.main_settings.playcd, {
-			{'/do Рация свисает на поясе.'},
-			{'/me сняв рацию с пояса, {gender:вызвал|вызвала} охрану по ней'},
-			{'/do Охрана выводит нарушителя из холла.'},
-			{'/expel %s %s',id,reason},
+	end)
+	
+	sampRegisterChatCommand('delops', function(id)
+		play_message(configuration.main_settings.playcd, true, {
+			{ "/adeldesc %s", id }
 		})
+	end)
+	
+	sampRegisterChatCommand('noflip', function(id)
+		play_message(configuration.main_settings.playcd, true, {
+			{ "/pm %s 0 К сожалению в данной ситуации не могу вам помочь.", id },
+			{ "/pm %s 0 Мы чиним/переворачиваем работяг на рабочем ТС.", id },
+			{ "/pm %s 0 Мы чиним/переворачиваем простого игрока на личном тс...", id },
+			{ "/pm %s 0 ...если онлайн ниже 700.", id },
+			{ "/pm %s 0 Во всех остальных случаях мы не флипаем игроков от слова вообще.", id }
+		})
+	end)
+	
+	sampRegisterChatCommand('noname', function(id)
+		play_message(configuration.main_settings.playcd, true, {
+			{ "/pm %s 1 Посмотрите пожалуйста в чат.", id },
+			{ "/pm %s 0 Вы были телепортированы по причине того что у вас НонРП ник", id },
+			{ "/pm %s 0 На нашем проекте запрещено играть с таким ником", id },
+			{ "/pm %s 0 Если вы хотите продолжить игру на сервере то выберете себе РП ник", id },
+			{ "/pm %s 0 Формат ника \"Имя_Фамилия\" Например: Alex_Benson или Christopher_Dills", id }
+		})
+	end)
+	
+	sampRegisterChatCommand('nosp', function(id)
+		play_message(configuration.main_settings.playcd, true, {
+			{ "/pm %s 0 К сожалению в данной ситуации не могу вам помочь.", id },	
+			{ "/pm %s 0 Нам разрешено спавнить если вы застряли и просите помощи об этом.", id },
+			{ "/pm %s 0 Если Вы забагались или же если упали в воду.", id },
+			{ "/pm %s 0 Во всех остальных случаях мы не спавним от слова вообще.", id }
+		})
+	end)
+	
+	sampRegisterChatCommand('nohl', function(id)
+		play_message(configuration.main_settings.playcd, true, {
+			{ "/pm %s 0 К сожалению в данной ситуации не могу вам помочь.", id },
+			{ "/pm %s 0 Нам разрешено лечить игроков только если мы сами виноваты...", id },
+			{ "/pm %s 0 ...в потере вашего здоровья или же читер/дмшик", id },
+			{ "/pm %s 0 Во всех остальных случаях мы не лечим игроков от слова совсем.", id }
+		})
+	end)
+	
+	sampRegisterChatCommand('nouval', function(id)
+		play_message(configuration.main_settings.playcd, true, {
+			{ "/pm %s 0 К сожалению в данной ситуации не могу вам помочь.", id },
+			{ "/pm %s 0 Мы увольняем только в том случае...", id },
+			{ "/pm %s 0 ...когда никто не занимает пост лидера в организации", id },
+			{ "/pm %s 0 Во всех остальных случаях мы не увольняем от слова совсем.", id },
+			{ "/pm %s 0 В вашей же организации есть лидер но он не в сети", id },
+			{ "/pm %s 0 Так что вы вас не можем уволить. Ожидайте лидера", id }
+		})
+	end)
+	
+	sampRegisterChatCommand('nofill', function(id)
+		play_message(configuration.main_settings.playcd, true, {
+			{ "/pm %s 0 К сожалению в данной ситуации не могу вам помочь.", id },	
+			{ "/pm %s 0 Мы бы очень рады вам помочь но у нас нет абсолютно никакой возможности...", id },
+			{ "/pm %s 0 ...заправлять транспорт вызовите механика или используйте канистру", id },
+			{ "/pm %s 0 Приятной игры на Arizona RP Gilbert <3", id }
+		})
+	end)
+	
+	sampRegisterChatCommand('noveh', function(id)
+		play_message(configuration.main_settings.playcd, true, {	
+			{ "/pm %s 0 К сожалению в данной ситуации не могу вам помочь.", id },
+			{ "/pm %s 0 Мы можем выдать транспорт при онлайне ниже 700 человек", id },
+			{ "/pm %s 0 При условии что игрок находиться в далёкой точке карты и рядом нету аренд.", id },
+			{ "/pm %s 0 Во всех остальных случаях мы не выдаем транспорт игрокам от слова вообще.", id }
+		})
+	end)
+	
+	sampRegisterChatCommand('sellcar', function(id)
+		cout('Не верно! Используйте /sellcarto(если хотите слить в госс то /slitcar)')
+	end)
+	
+	sampRegisterChatCommand('slitcar', function(id)
+		play_message(configuration.main_settings.playcd, true, {
+			{ "/sellcar" }
+		})
+	end)
+	
+	sampRegisterChatCommand('mb', function(id)
+		play_message(configuration.main_settings.playcd, true, {{ "/members" } })
+	end)
+	
+	sampRegisterChatCommand('jobp', function(id)
+		play_message(configuration.main_settings.playcd, true, {{ "/jobprogress" } })
+	end)
+	
+	sampRegisterChatCommand('setchatid', function(text)
+		if #text > 0 then
+			cout(string.format('Вы изменили ID чата беседы: %s -> %s ', configuration.RankNames[8], text))
+			configuration.RankNames[8] = text
+			inicfg.save(configuration,'Esida')
+		else
+		cout('Используй /setchatid [ID Беседы] (Только цифры)')
+		end
+	end)
+	
+	sampRegisterChatCommand('settoken', function(text)
+		if #text > 0 then
+			cout(string.format('Вы изменили токен доступа к ВКонтакте'))
+			configuration.RankNames[7] = text
+			inicfg.save(configuration,'Esida')
+		else
+		cout('Используй /settoken [Токен]')
+		end
 	end)
 
 	updatechatcommands()
@@ -6274,6 +6205,7 @@ function main()
 	end)
 
 	while true do
+		rnd = math.random(-2147483648, 2147483647)
 		if configuration.main_settings.fmtype == 0 and getCharPlayerIsTargeting() then
 			if configuration.main_settings.createmarker then
 				local targettingped = select(2,getCharPlayerIsTargeting())
@@ -6382,158 +6314,97 @@ function main()
 	end
 end
 
+function play_message(delay, screen, text_array)
+	SPEAKING = lua_thread.create(function()
+		for i, line in ipairs(text_array) do
+			sampSendChat(string.format(line[1], table.unpack(line, 2)))
+			if i ~= #text_array then
+				wait(delay)
+			elseif screen == true then
+				wait(1000)
+			end
+		end
+		SPEAKING = nil
+	end)
+	return true
+end
+
 changelog = {
 	versions = {
 		{
-			version = '1.0',
-			date = '31.03.2021',
-			text = {'Релиз (спасибо zody за помощь в разработке)'},
+			version = '2.0',
+			date = '21.01.2022',
+			text = {
+				'Добавлена интеграция ВКонтакте:',
+				'Для использование для начала надо настроить',
+				'/settag [Админ-Тег] - Изменить свой админ тег в скрипте',
+				'/settoken [Токен] - Изменить токен от ВКонтакте',
+				'/setchatid [ID беседы] - Изменить ID беседы куда отправлять сообщение',
+				'Возможности которые появились:',
+				'/lwarn [ID] [Причина] - Выдать пред лидеру/заму/министру',
+				'/lunwarn [ID] [Причина] - Снять пред лидеру/заму/министру',
+				'/vig [ID] [Причина] - Выдать выговор лидеру/заму/министру',
+				'/unvig [ID] [Причина] - Снять выговор лидеру/заму/министру',
+				'/form [Форма] - Отправить форму для Admin Tools',
+			},
 		},
 
 		{
 			version = '2.1',
-			date = '01.05.2021',
+			date = '22.01.2022',
 			text = {
-				'Меню статистики /ashstats сделано более удобным',
-				'Двойной клик сохранит местоположение статистики /ashstats',
-				'Изменены кнопки в главном меню /ash',
-				'Теперь можно тестировать цвета в /ash',
-				'Теперь при активации бинда последнее сообщение будет без задержки',
-				'Добавлен список изменений',
-				'Исправлена проверка обновлений через /ash',
-				'Кардинальный редизайн главного меню /ash',
-				'Добавлены разные стили окон',
-				'Добавлены настройки цветов /r чата и /d чата',
-				'Добавлена функция просмотра правил',
-				'Добавлена функция быстрого /time + скрин',
-				'Добавлено автоопределение пола',
-				'Добавлена функция удаления конфига',
+				'Добавлен репозитории полезных скриптов провереных автором',
+				'Убрана команда: /faminv бесполезная для администратора',
+				'Убрана команда: /fm так как пересикается с серверной',
+				'Добавлена возможность отключить авто-обновление',
+				'В репозитории добавлен Esida WTD Changer',
+				'Добавлена кнопка удаление скрипта',
+				'Убрана не рабочую команда: /orgmb',
+				'Удалены бесполезные команды:',
+				'/inv /unv /gr /ro /rbo',
+				'Добавлен Discord автора',
+				'Добавлен changelog',
 			},
 			patches = {
 				active = false,
 				text = [[
- - Исправлен баг с собеседованиями
- - Исправлен баг с поиском по уставу
- - Исправлен баг с ударом при принятии человека в организацию]]
+ - Исправлено появление окна ошибки при обновлений
+ - Исправлена ссылка на Telegram автора]]
 			},
 		},
 
 		{
 			version = '2.2',
-			date = '10.05.2021',
+			date = '22.01.2021',
 			text = {
-				'Добавлена функция увольнения с ЧС через команду',
-				'Добавлена функция озвучивания лекций /ashlect',
-				'Переделана система проверки нахождения на сервере Аризоны',
-				'Переработана система правил',
-				'Исправлен краш при поиске в правилах вводя управляющие символы',
-				'Исправлены некоторые грамматические ошибки',
+				'Убрана из загрузки система повышений',
+				'Убран в настройках пункт выбор пола',
+				'Убран в настройках пункт авто /time',
+				'Убрана кнопка проверить обновление',
+				'Добалвен раздел благодарности',
+				'Убран стандартный биндер',
+				'Удалена команда /setrank',
+				'Удалена команда /ustav',
+				'Убран раздел "Правила"',
 			},
  			patches = {
 				active = false,
 				text = [[
- - Исправлен краш при открытии /ashstats
- - Исправлен краш при сбросе цвета
- - Исправлен баг с непродающимися лицензиями
- - Исправлен баг с пропадающим курсором после использования быстрого меню]]
-			},
-		},
-
-		{
-			version = '2.3',
-			date = '14.05.2021',
-			text = {
-				'Убрана зависимость от библиотеки rkeys',
-				'Убрана зависимость от библиотеки fAwesome5',
-				'Добавлена функция показа полосы прокрутки',
-				'Оптимизирована и улучшена система указаний клавиш для биндера',
-				'Добавлены png картинки вместо заголовков у окон',
-				'Добавлены тэги в биндер',
-			},
-		},
-
-		{
-			version = '2.4',
-			date = '16.05.2021',
-			text = {
-				'Добавлена функция общения в рацию департамента /ashdep',
-				'Изменён список изменений',
-				'Удалена светло-тёмная тема',
-				'Удалена система повышений из изначальных правилах из-за ненадобности',
-				'Добавлена поддержка 16-го сервера (Gilbert)',
-				'Исправлены размеры изображений',
-				'Теперь меню лекций доступно с 5-го ранга',
-			},
-			patches = {
-				active = false,
-				text = [[
- - Добавлена функция продажи лицензии на таксование
- - Исправлен баг с вводом /givelicense самостоятельно]]
-			},
-		},
-
-		{
-			version = '2.5',
-			date = '25.07.2021',
-			text = {
-				'Добавлена автоотыгровка дубинки',
-				'Выгонять теперь можно со 2-го ранга',
-				'Переделана система проверки устава',
-				'Добавлен таймер последнего вопроса в проверку устава',
-			},
-			patches = {
-				active = false,
-				text = [[ - Исправлен баг с крашем скрипта при озвучивании прайс листа]]
-			},
-		},
-
-		{
-			version = '2.6',
-			date = '28.08.2021',
-			text = {
-				'Добавлена поддержка 17-го сервера (Show Low)',
-			},
-			patches = {
-				active = false,
-				text = [[
- - Исправлен краш при открытии вкладки 'Связь со мной'
- - Исправлен баг с восстановлением лекций/вопросов
- - Испралена неработоспособность скрипта из-за перехода сервера на R3]]
-			},
-		},
-
-		{
-			version = '2.7',
-			date = '02.11.2021',
-			text = {
-				'Добавлена функция задержки между сообщениями в биндере',
-				'Добавлена причина /expel',
-				'Теперь ранги в хелпере синхронизируются с вашими',
-				'Добавлена поддержка 18-го сервера (Casa-Grande)',
+ - Исправлено появление окна ошибки при перезагрузке всех скриптов
+ - Исправлено появление окна ошибки при обновлений теперь точно
+ - Исправлена ошибка в нике Christopher_Dills в команде /noname]]
 			},
 		},
 		
 		{
-			version = '3.0',
-			date = '11.12.2021',
+			version = '3.0 beta',
+			date = '28.01.2022',
 			text = {
-				'Изменение интерфейса в списке изменений и /ash',
-				'Добавлен новый интерфейс в меню быстрого доступа',
-				'Полный рефакторинг и переосмысление кода',
-				'Изменена система проверки и установки обновлений, теперь установку должны подтверждать Вы',
-				'Добавлены уведомления, заметки',
-				'Добавлена поддержка «MoonMonet»',
-				'Полный переход на mimgui',
-				'Изменена система проверки и подкачки библиотек',
-				'Добавлены правила и проверка устава в зависимости от вашего сервера (правила были взяты с форума 13.11.2021, при изменении писать автору)',
-				'Добавлена вкладка \'Отыгровки\', в которой можно настроить: проверку мед. карты при продаже лицензии на оружие, охоту; замену слова \'Автошкола\' на \'ГЦЛ\'; выставить задержку между сообщениями',
-			},
-			patches = {
-				active = false,
-				text = [[
- - Исправлен краш скрипта при изменении местоположения выключенной статистики
- - Исправлен баг с неработающей командой /ashupd
- - Исправлен баг с размером меню быстрого доступа при смене стиля]]
+				'Полностью изменен дизайн скрипта',
+				'Удалена команда /settag',
+				'В настройки добавлен пункт Админ-Тег',
+				'Добавлена команда /dform [Форма]',
+				'Сервера Casa-Grande и Page добавлены в белый список',
 			},
 		},
 	},
