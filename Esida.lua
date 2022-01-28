@@ -2,7 +2,7 @@ script_name('Esida')
 script_description('Скрипт для гос организации.')
 script_author('Alex_Benson')
 script_version_number(46)
-script_version('3.0 beta')
+script_version('3.1 beta')
 script_dependencies('mimgui; samp events; lfs; MoonMonet')
 
 require 'moonloader'
